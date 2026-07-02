@@ -15,7 +15,7 @@ const stage = document.getElementById('productStage');
 const overlays = [...document.querySelectorAll('.product-layer.overlay')];
 const chips = [...document.querySelectorAll('.chip')];
 const finishName = document.getElementById('finishName');
-const finishPanel = document.querySelector('.finish-panel');
+const finishPanel = document.getElementById('finishPanel');
 const viewButtons = [...document.querySelectorAll('.seg')];
 
 function setFinish(finish){
@@ -31,20 +31,14 @@ function setView(view){
   viewButtons.forEach(btn => btn.classList.toggle('active', btn.dataset.view === view));
   stage.classList.toggle('rear-mode', view === 'rear');
   finishPanel.classList.toggle('disabled', view === 'rear');
-  if(view === 'rear'){
-    finishName.textContent = 'Rear View';
-  } else {
-    finishName.textContent = labels[currentFinish];
-  }
+  finishName.textContent = view === 'rear' ? 'Rear View' : labels[currentFinish];
 }
 
 chips.forEach(chip => chip.addEventListener('click', () => setFinish(chip.dataset.finish)));
 viewButtons.forEach(btn => btn.addEventListener('click', () => setView(btn.dataset.view)));
 
-// Preload overlays after first paint.
-requestIdleCallback?.(() => {
-  ['black','white','rose','glass','teal','bamboo','rear','home','office','sketches'].forEach(name => {
-    const img = new Image();
-    img.src = `assets/${name}.webp`;
-  });
-});
+if ('requestIdleCallback' in window) {
+  requestIdleCallback(() => ['black','white','rose','glass','teal','bamboo','rear','home','office','sketches'].forEach(name => {
+    const img = new Image(); img.src = `assets/${name}.webp`;
+  }));
+}
