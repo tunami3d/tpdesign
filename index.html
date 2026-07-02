@@ -1,102 +1,62 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>HI-re M3 Router</title>
-  <meta name="description" content="HI-re M3, a premium Wi-Fi 7 router concept designed to belong in the home." />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css" />
 </head>
-<body>
-  <main>
-    <section class="hero" aria-label="Product hero">
-      <div class="hero-copy">
+<body data-view="front">
+  <main class="page">
+    <section class="hero">
+      <div class="intro">
         <p class="eyebrow">Premium Wi‑Fi 7 Router</p>
         <h1>HI-re M3</h1>
         <p class="tagline">Designed to Belong.</p>
-      </div>
-      <div class="hero-product">
-        <img src="assets/Prod_Base_Front.webp" alt="HI-re M3 router in natural aluminum" />
-      </div>
-    </section>
-
-    <section class="config" aria-label="Router configurator">
-      <div class="product-stage">
-        <div class="sticky-product">
-          <div class="product-card">
-            <img id="productImage" src="assets/Prod_Base_Front.webp" alt="HI-re M3 front view" />
-          </div>
-          <div class="view-toggle" role="group" aria-label="View selector">
-            <button class="pill active" data-view="front">Front</button>
-            <button class="pill" data-view="back">Rear</button>
-          </div>
+        <div class="specs">
+          <span>Wi‑Fi 7 BE19000</span><span>10 GbE WAN/LAN</span><span>4× 2.5 Gb LAN</span><span>Mesh Ready</span><span>USB‑C</span>
         </div>
       </div>
-
-      <div class="controls">
-        <p class="eyebrow">Crafted In</p>
-        <h2 id="finishName">Natural Aluminum</h2>
-        <p class="finish-note" id="finishNote">Warm anodized aluminum with a calm architectural presence.</p>
-
-        <div class="finish-list" role="group" aria-label="Finish selector">
-          <button class="finish active" data-finish="natural"><span class="swatch natural"></span><span>Natural Aluminum</span></button>
-          <button class="finish" data-finish="black"><span class="swatch black"></span><span>Obsidian</span></button>
-          <button class="finish" data-finish="white"><span class="swatch white"></span><span>Soft White</span></button>
-          <button class="finish" data-finish="rose"><span class="swatch rose"></span><span>Rose Metal</span></button>
-          <button class="finish" data-finish="glass"><span class="swatch glass"></span><span>Smoked Glass</span></button>
-          <button class="finish" data-finish="teal"><span class="swatch teal"></span><span>Deep Teal</span></button>
-          <button class="finish" data-finish="wood"><span class="swatch wood"></span><span>Walnut</span></button>
+      <div class="config-shell">
+        <div class="product-card">
+          <div class="product-stage">
+            <img class="product-img front base" src="assets/Prod_Base_Front.png" alt="HI-re M3 front base" />
+            <img class="product-img front overlay" id="finishOverlay" alt="Selected finish overlay" />
+            <img class="product-img rear" src="assets/Prod_Base_Back.png" alt="HI-re M3 rear ports" />
+          </div>
         </div>
+        <aside class="controls">
+          <div class="control-block">
+            <p class="label">View</p>
+            <div class="segmented">
+              <button class="seg active" data-view="front">Front</button>
+              <button class="seg" data-view="rear">Rear</button>
+            </div>
+          </div>
+          <div class="control-block" id="finishPanel">
+            <div class="row-title"><p class="label">Crafted In</p><p class="rear-note">Finishes shown on front view.</p></div>
+            <div class="chips">
+              <button class="chip active" data-finish="natural" data-src=""><i></i>Natural</button>
+              <button class="chip" data-finish="black" data-src="assets/Prod_Base_Front_black.png"><i></i>Obsidian</button>
+              <button class="chip" data-finish="white" data-src="assets/Prod_Base_Front_white.png"><i></i>White</button>
+              <button class="chip" data-finish="rose" data-src="assets/Prod_Base_Front_rose.png"><i></i>Rose</button>
+              <button class="chip" data-finish="glass" data-src="assets/Prod_Base_Front_glass.png"><i></i>Glass</button>
+              <button class="chip" data-finish="teal" data-src="assets/Prod_Base_Front_teal.png"><i></i>Teal</button>
+              <button class="chip" data-finish="bamboo" data-src="assets/Prod_Base_Front_wood.png"><i></i>Bamboo</button>
+            </div>
+          </div>
+          <div class="mini-features">
+            <div><strong>Ambient</strong><span>Light bar status</span></div>
+            <div><strong>CNC</strong><span>Aluminum chassis</span></div>
+            <div><strong>Passive</strong><span>Thermal grille</span></div>
+            <div><strong>Quiet</strong><span>No display clutter</span></div>
+          </div>
+        </aside>
       </div>
     </section>
-
-    <section class="statement">
-      <p>Technology should become quieter as it becomes more capable.</p>
-      <span>HI-re M3 explores a router meant for the shelf, not the closet.</span>
-    </section>
-
-    <section class="process">
-      <div class="section-head">
-        <p class="eyebrow">Process</p>
-        <h2>Early exploration</h2>
-      </div>
-      <img src="assets/Prod_Base_sketches.webp" alt="Industrial design sketch sheet for HI-re M3 router" />
-    </section>
-
-    <section class="features">
-      <div class="feature-card">
-        <p class="eyebrow">Interface</p>
-        <h3>Ambient light bar</h3>
-        <p>Status without another screen. Calm, glanceable, and invisible when off.</p>
-      </div>
-      <div class="feature-card">
-        <p class="eyebrow">Material</p>
-        <h3>Architectural grille</h3>
-        <p>A machined front surface that becomes both visual identity and passive cooling.</p>
-      </div>
-      <div class="feature-card">
-        <p class="eyebrow">Control</p>
-        <h3>Knurled aluminum dial</h3>
-        <p>A single tactile interaction for modes, pairing, brightness, and privacy.</p>
-      </div>
-    </section>
-
-    <section class="connectivity">
-      <div>
-        <p class="eyebrow">Connectivity</p>
-        <h2>Flagship ports. Hidden from view.</h2>
-      </div>
-      <ul>
-        <li>10 GbE WAN/LAN</li>
-        <li>4 × 2.5 Gb LAN</li>
-        <li>10 Gb SFP+</li>
-        <li>USB‑C service</li>
-        <li>Mesh ready</li>
-      </ul>
-    </section>
+    <section class="statement"><h2>Technology should become quieter as it becomes more capable.</h2><p>HI-re M3 explores a router designed for the shelf, not the closet — calm enough for the home, powerful enough for modern connectivity.</p></section>
+    <section class="process"><div class="section-head"><p class="eyebrow">Process</p><h2>Early exploration</h2></div><img src="assets/Prod_Base_sketches.png" alt="Industrial design sketch exploration sheet" /></section>
+    <section class="engineering"><div class="section-head"><p class="eyebrow">Engineering</p><h2>Performance without visual noise.</h2></div><div class="eng-grid"><article><span>01</span><h3>10 Gb Connectivity</h3><p>Multi-gig WAN/LAN with fast wired backhaul for demanding homes.</p></article><article><span>02</span><h3>Hidden Antenna Array</h3><p>Performance hardware contained inside a calm architectural silhouette.</p></article><article><span>03</span><h3>Ambient Status</h3><p>A single diffused light bar replaces blinking LEDs and screen clutter.</p></article></div></section>
   </main>
   <script src="script.js"></script>
 </body>

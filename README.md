@@ -1,10 +1,11 @@
-# HI-re M3 Router
+# HI-re M3 Vercel Site
 
-Static Vercel-ready product microsite.
+Static one-page product microsite.
 
-## Deploy
-Upload this folder to GitHub, then import it in Vercel.
+Vercel settings:
+- Framework Preset: Other
+- Build Command: leave blank
+- Output Directory: leave blank
+- Install Command: leave blank
 
-Framework Preset: Other  
-Build Command: leave blank  
-Output Directory: leave blank
+Make sure `index.html` is at the project root.
