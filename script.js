@@ -1,37 +1,70 @@
-const finishImage = document.getElementById('finishImage');
-const viewerNote = document.getElementById('viewerNote');
-const productLayers = document.getElementById('productLayers');
+const images = {
+  front: {
+    natural: 'assets/Prod_Base_Front.webp',
+    black: 'assets/Prod_Base_Front_black.webp',
+    white: 'assets/Prod_Base_Front_white.webp',
+    rose: 'assets/Prod_Base_Front_rose.webp',
+    glass: 'assets/Prod_Base_Front_glass.webp',
+    teal: 'assets/Prod_Base_Front_teal.webp',
+    wood: 'assets/Prod_Base_Front_wood.webp'
+  },
+  back: {
+    natural: 'assets/Prod_Base_Back.webp',
+    black: 'assets/Prod_Base_Back.webp',
+    white: 'assets/Prod_Base_Back.webp',
+    rose: 'assets/Prod_Base_Back.webp',
+    glass: 'assets/Prod_Base_Back.webp',
+    teal: 'assets/Prod_Base_Back.webp',
+    wood: 'assets/Prod_Base_Back.webp'
+  }
+};
 
-document.querySelectorAll('.finish-tile').forEach((button) => {
+const copy = {
+  natural: ['Natural Aluminum', 'Warm anodized aluminum with a calm architectural presence.'],
+  black: ['Obsidian', 'Deep matte black with low reflection and a quiet technical character.'],
+  white: ['Soft White', 'A clean ceramic-inspired finish designed for bright interiors.'],
+  rose: ['Rose Metal', 'A warm metallic tone that feels softer than traditional hardware.'],
+  glass: ['Smoked Glass', 'A reflective architectural finish with hidden depth.'],
+  teal: ['Deep Teal', 'A muted colorway for interiors that want a little personality.'],
+  wood: ['Walnut', 'A furniture-inspired finish built to live naturally on a shelf.']
+};
+
+let state = { finish: 'natural', view: 'front' };
+const productImage = document.getElementById('productImage');
+const finishName = document.getElementById('finishName');
+const finishNote = document.getElementById('finishNote');
+
+function updateProduct() {
+  const nextSrc = images[state.view][state.finish];
+  productImage.classList.add('is-changing');
+  window.setTimeout(() => {
+    productImage.src = nextSrc;
+    productImage.alt = `HI-re M3 ${state.view} view in ${copy[state.finish][0]}`;
+    finishName.textContent = copy[state.finish][0];
+    finishNote.textContent = copy[state.finish][1];
+    productImage.classList.remove('is-changing');
+  }, 160);
+}
+
+document.querySelectorAll('.finish').forEach(button => {
   button.addEventListener('click', () => {
-    document.querySelectorAll('.finish-tile').forEach((b) => b.classList.remove('active'));
+    document.querySelectorAll('.finish').forEach(b => b.classList.remove('active'));
     button.classList.add('active');
-    finishImage.classList.remove('active');
-    setTimeout(() => {
-      finishImage.src = button.dataset.src;
-      viewerNote.textContent = button.dataset.note;
-      finishImage.onload = () => finishImage.classList.add('active');
-      productLayers.classList.remove('show-back');
-      document.querySelectorAll('.view-btn').forEach((b) => b.classList.toggle('active', b.dataset.view === 'front'));
-    }, 120);
+    state.finish = button.dataset.finish;
+    updateProduct();
   });
 });
 
-document.querySelectorAll('.view-btn').forEach((button) => {
+document.querySelectorAll('.pill').forEach(button => {
   button.addEventListener('click', () => {
-    document.querySelectorAll('.view-btn').forEach((b) => b.classList.remove('active'));
+    document.querySelectorAll('.pill').forEach(b => b.classList.remove('active'));
     button.classList.add('active');
-    const back = button.dataset.view === 'back';
-    productLayers.classList.toggle('show-back', back);
-    viewerNote.textContent = back ? 'Recessed multi-gig rear IO / cable management bay' : document.querySelector('.finish-tile.active').dataset.note;
+    state.view = button.dataset.view;
+    updateProduct();
   });
 });
 
-const card = document.querySelector('.product-card');
-card.addEventListener('mousemove', (e) => {
-  const rect = card.getBoundingClientRect();
-  const x = (e.clientX - rect.left) / rect.width - .5;
-  const y = (e.clientY - rect.top) / rect.height - .5;
-  card.style.transform = `perspective(1200px) rotateY(${x * 2.5}deg) rotateX(${-y * 1.5}deg)`;
+Object.values(images.front).concat(Object.values(images.back)).forEach(src => {
+  const img = new Image();
+  img.src = src;
 });
-card.addEventListener('mouseleave', () => card.style.transform = 'none');

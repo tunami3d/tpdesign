@@ -1,11 +1,10 @@
-# AETHER ONE product microsite
+# HI-re M3 Router
 
-Static one-page product presentation built from the supplied layered assets.
+Static Vercel-ready product microsite.
 
-## Deploy to Vercel
+## Deploy
+Upload this folder to GitHub, then import it in Vercel.
 
-1. Upload this folder to a GitHub repo.
-2. Import the repo in Vercel.
-3. No build command needed. Output directory is the project root.
-
-You can also drag this folder into Vercel if using the Vercel dashboard upload flow.
+Framework Preset: Other  
+Build Command: leave blank  
+Output Directory: leave blank
