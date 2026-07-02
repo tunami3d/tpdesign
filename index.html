@@ -1,63 +1,122 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>HI-re M3 Router</title>
+  <meta name="description" content="HI-re M3 — a premium Wi‑Fi 7 router concept designed to belong in the home." />
+  <link rel="preload" href="assets/front-base.webp" as="image" />
+  <link rel="preload" href="assets/bamboo.webp" as="image" />
   <link rel="stylesheet" href="styles.css" />
 </head>
-<body data-view="front">
-  <main class="page">
-    <section class="hero">
-      <div class="intro">
+<body>
+  <main>
+    <section class="hero" id="top">
+      <div class="hero-copy">
         <p class="eyebrow">Premium Wi‑Fi 7 Router</p>
         <h1>HI-re M3</h1>
         <p class="tagline">Designed to Belong.</p>
-        <div class="specs">
-          <span>Wi‑Fi 7 BE19000</span><span>10 GbE WAN/LAN</span><span>4× 2.5 Gb LAN</span><span>Mesh Ready</span><span>USB‑C</span>
+        <div class="specs" aria-label="Technical specifications">
+          <span>Wi‑Fi 7 BE19000</span>
+          <span>10 Gb WAN/LAN</span>
+          <span>4×2.5 Gb LAN</span>
+          <span>Mesh Ready</span>
         </div>
       </div>
-      <div class="config-shell">
-        <div class="product-card">
-          <div class="product-stage">
-            <img class="product-img front base" src="assets/Prod_Base_Front.png" alt="HI-re M3 front base" />
-            <img class="product-img front overlay" id="finishOverlay" alt="Selected finish overlay" />
-            <img class="product-img rear" src="assets/Prod_Base_Back.png" alt="HI-re M3 rear ports" />
+
+      <div class="config-wrap" aria-label="Product configurator">
+        <div class="viewer-shell">
+          <div class="product-stage" id="productStage">
+            <img class="product-layer base front-base" src="assets/front-base.webp" alt="HI-re M3 front base" />
+            <img class="product-layer overlay" data-finish="black" src="assets/black.webp" alt="Obsidian finish overlay" />
+            <img class="product-layer overlay" data-finish="white" src="assets/white.webp" alt="White finish overlay" />
+            <img class="product-layer overlay" data-finish="rose" src="assets/rose.webp" alt="Rose finish overlay" />
+            <img class="product-layer overlay" data-finish="glass" src="assets/glass.webp" alt="Glass finish overlay" />
+            <img class="product-layer overlay" data-finish="teal" src="assets/teal.webp" alt="Teal finish overlay" />
+            <img class="product-layer overlay active" data-finish="bamboo" src="assets/bamboo.webp" alt="Bamboo finish overlay" />
+            <img class="product-layer rear" src="assets/rear.webp" alt="HI-re M3 rear port view" />
           </div>
         </div>
-        <aside class="controls">
-          <div class="control-block">
-            <p class="label">View</p>
-            <div class="segmented">
-              <button class="seg active" data-view="front">Front</button>
-              <button class="seg" data-view="rear">Rear</button>
+
+        <div class="controls-card">
+          <div class="segmented" role="tablist" aria-label="View selector">
+            <button class="seg active" data-view="front" type="button">Front</button>
+            <button class="seg" data-view="rear" type="button">Rear</button>
+          </div>
+
+          <div class="finish-panel">
+            <div class="control-row">
+              <div>
+                <p class="control-label">Crafted in</p>
+                <p class="finish-name" id="finishName">Bamboo</p>
+              </div>
+              <p class="rear-note" id="rearNote">Finish options shown on front view.</p>
+            </div>
+            <div class="chips" id="finishChips">
+              <button class="chip" data-finish="natural" type="button"><span class="dot natural"></span>Natural</button>
+              <button class="chip" data-finish="black" type="button"><span class="dot black"></span>Obsidian</button>
+              <button class="chip" data-finish="white" type="button"><span class="dot white"></span>White</button>
+              <button class="chip" data-finish="rose" type="button"><span class="dot rose"></span>Rose</button>
+              <button class="chip" data-finish="glass" type="button"><span class="dot glass"></span>Glass</button>
+              <button class="chip" data-finish="teal" type="button"><span class="dot teal"></span>Teal</button>
+              <button class="chip active" data-finish="bamboo" type="button"><span class="dot bamboo"></span>Bamboo</button>
             </div>
           </div>
-          <div class="control-block" id="finishPanel">
-            <div class="row-title"><p class="label">Crafted In</p><p class="rear-note">Finishes shown on front view.</p></div>
-            <div class="chips">
-              <button class="chip active" data-finish="natural" data-src=""><i></i>Natural</button>
-              <button class="chip" data-finish="black" data-src="assets/Prod_Base_Front_black.png"><i></i>Obsidian</button>
-              <button class="chip" data-finish="white" data-src="assets/Prod_Base_Front_white.png"><i></i>White</button>
-              <button class="chip" data-finish="rose" data-src="assets/Prod_Base_Front_rose.png"><i></i>Rose</button>
-              <button class="chip" data-finish="glass" data-src="assets/Prod_Base_Front_glass.png"><i></i>Glass</button>
-              <button class="chip" data-finish="teal" data-src="assets/Prod_Base_Front_teal.png"><i></i>Teal</button>
-              <button class="chip" data-finish="bamboo" data-src="assets/Prod_Base_Front_wood.png"><i></i>Bamboo</button>
-            </div>
-          </div>
-          <div class="mini-features">
-            <div><strong>Ambient</strong><span>Light bar status</span></div>
-            <div><strong>CNC</strong><span>Aluminum chassis</span></div>
-            <div><strong>Passive</strong><span>Thermal grille</span></div>
-            <div><strong>Quiet</strong><span>No display clutter</span></div>
-          </div>
-        </aside>
+        </div>
       </div>
     </section>
-    <section class="statement"><h2>Technology should become quieter as it becomes more capable.</h2><p>HI-re M3 explores a router designed for the shelf, not the closet — calm enough for the home, powerful enough for modern connectivity.</p></section>
-    <section class="process"><div class="section-head"><p class="eyebrow">Process</p><h2>Early exploration</h2></div><img src="assets/Prod_Base_sketches.png" alt="Industrial design sketch exploration sheet" /></section>
-    <section class="engineering"><div class="section-head"><p class="eyebrow">Engineering</p><h2>Performance without visual noise.</h2></div><div class="eng-grid"><article><span>01</span><h3>10 Gb Connectivity</h3><p>Multi-gig WAN/LAN with fast wired backhaul for demanding homes.</p></article><article><span>02</span><h3>Hidden Antenna Array</h3><p>Performance hardware contained inside a calm architectural silhouette.</p></article><article><span>03</span><h3>Ambient Status</h3><p>A single diffused light bar replaces blinking LEDs and screen clutter.</p></article></div></section>
+
+    <section class="statement compact">
+      <h2>Technology should become quieter as it becomes more capable.</h2>
+      <p>HI-re M3 explores a router designed for display, not concealment — a connected object that belongs beside books, furniture, and the spaces people actually live in.</p>
+    </section>
+
+    <section class="lifestyle">
+      <div class="section-head">
+        <p class="eyebrow">Home</p>
+        <h2>Designed for the shelf, not the closet.</h2>
+      </div>
+      <img src="assets/home.webp" alt="HI-re M3 router displayed in a warm home setting" />
+    </section>
+
+    <section class="lifestyle">
+      <div class="section-head">
+        <p class="eyebrow">Workspace</p>
+        <h2>Calm hardware for modern work.</h2>
+      </div>
+      <img src="assets/office.webp" alt="HI-re M3 router displayed in a clean office setting" />
+    </section>
+
+    <section class="process">
+      <div class="section-head">
+        <p class="eyebrow">Process</p>
+        <h2>From object study to product language.</h2>
+      </div>
+      <img src="assets/sketches.webp" alt="Industrial design sketch sheet for HI-re M3" />
+    </section>
+
+    <section class="engineering">
+      <div class="section-head">
+        <p class="eyebrow">Engineering</p>
+        <h2>Quiet interface. Serious connectivity.</h2>
+      </div>
+      <div class="feature-grid">
+        <article>
+          <h3>Ambient light bar</h3>
+          <p>Status is communicated through a single diffused line — no screen, no clock, no noise.</p>
+        </article>
+        <article>
+          <h3>Passive thermal grille</h3>
+          <p>Cooling becomes part of the architecture instead of a visible compromise.</p>
+        </article>
+        <article>
+          <h3>Multi‑gig ports</h3>
+          <p>10 Gb WAN/LAN, 4×2.5 Gb LAN, USB‑C service, and mesh-ready backhaul.</p>
+        </article>
+      </div>
+    </section>
   </main>
+
   <script src="script.js"></script>
 </body>
 </html>
