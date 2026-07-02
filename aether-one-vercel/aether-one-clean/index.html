@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AETHER ONE — Product Visualization</title>
+  <meta name="description" content="A one-page product visualization microsite by Michael Altuna." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <a class="mark" href="#hero" aria-label="Aether One home">AETHER</a>
+    <nav>
+      <a href="#story">Story</a>
+      <a href="#materials">CMF</a>
+      <a href="#process">Process</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </header>
+
+  <main>
+    <section id="hero" class="hero section-pad">
+      <div class="copy">
+        <p class="eyebrow">Premium Wi‑Fi 7 Router Concept</p>
+        <h1>AETHER ONE</h1>
+        <p class="lede">Designed to belong on the shelf — not disappear behind it.</p>
+        <div class="hero-actions">
+          <a class="button" href="#materials">Choose Finish</a>
+          <a class="button ghost" href="#story">Read Story</a>
+        </div>
+      </div>
+
+      <div class="product-stage" aria-label="Interactive product finish viewer">
+        <div class="product-card">
+          <div class="view-toggle" role="group" aria-label="View selection">
+            <button class="view-btn active" data-view="front">Front</button>
+            <button class="view-btn" data-view="back">Rear IO</button>
+          </div>
+          <div class="product-layers" id="productLayers">
+            <img class="product-img base front-view" src="assets/optimized/Prod_Base_Front.webp" alt="AETHER ONE base product render" />
+            <img class="product-img finish front-view active" id="finishImage" src="assets/optimized/Prod_Base_Front_glass.webp" alt="Selected finish layer" />
+            <img class="product-img back-view" src="assets/optimized/Prod_Base_Back.webp" alt="Rear port layout view" />
+          </div>
+          <p class="viewer-note" id="viewerNote">Natural Aluminum / ambient light bar / front grille</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="story" class="story section-pad">
+      <div class="section-label">01 / Design Story</div>
+      <div class="story-grid">
+        <h2>Connectivity should feel calm.</h2>
+        <p>Routers are usually treated as infrastructure — hidden behind televisions, tucked into cabinets, surrounded by cables. AETHER ONE explores a different idea: a high-performance device designed as part of the home.</p>
+        <p>The form uses a quiet architectural silhouette, a flush status light, and one tactile control point. No clock. No emoji display. No constant visual noise. Just enough communication when needed, and silence when not.</p>
+      </div>
+    </section>
+
+    <section id="materials" class="materials section-pad">
+      <div class="section-label">02 / CMF System</div>
+      <div class="materials-head">
+        <h2>Choose a finish.</h2>
+        <p>Layered PNG assets swap over the base render for fast CMF exploration.</p>
+      </div>
+      <div class="finish-grid" role="list">
+        <button class="finish-tile active" data-src="assets/optimized/Prod_Base_Front_glass.webp" data-name="Natural Aluminum" data-note="Natural Aluminum / ambient light bar / front grille">
+          <span class="swatch aluminum"></span><span>Natural Aluminum</span>
+        </button>
+        <button class="finish-tile" data-src="assets/optimized/Prod_Base_Front_black.webp" data-name="Obsidian" data-note="Obsidian anodized aluminum / low contrast grille">
+          <span class="swatch black"></span><span>Obsidian</span>
+        </button>
+        <button class="finish-tile" data-src="assets/optimized/Prod_Base_Front_rose.webp" data-name="Champagne" data-note="Champagne anodized aluminum / warm interior palette">
+          <span class="swatch rose"></span><span>Champagne</span>
+        </button>
+        <button class="finish-tile" data-src="assets/optimized/Prod_Base_Front_teal.webp" data-name="Deep Teal" data-note="Deep Teal / muted accent finish">
+          <span class="swatch teal"></span><span>Deep Teal</span>
+        </button>
+        <button class="finish-tile" data-src="assets/optimized/Prod_Base_Front_white.webp" data-name="Soft White" data-note="Soft White / gallery object finish">
+          <span class="swatch white"></span><span>Soft White</span>
+        </button>
+        <button class="finish-tile" data-src="assets/optimized/Prod_Base_Front_wood.webp" data-name="Walnut" data-note="Walnut accent / furniture-inspired CMF direction">
+          <span class="swatch wood"></span><span>Walnut</span>
+        </button>
+      </div>
+    </section>
+
+    <section class="feature-band section-pad">
+      <div class="feature"><span>01</span><h3>CNC Aluminum Shell</h3><p>Micro-chamfered surfaces create a precise, furniture-grade object.</p></div>
+      <div class="feature"><span>02</span><h3>Ambient Light Bar</h3><p>Status is reduced to a single calm signal — visible only when needed.</p></div>
+      <div class="feature"><span>03</span><h3>Knurled Control</h3><p>A tactile hardware mode dial for Home, Work, Streaming, Night and Privacy.</p></div>
+      <div class="feature"><span>04</span><h3>Multi‑Gig Rear IO</h3><p>Flagship-level ports arranged in a recessed cable-management bay.</p></div>
+    </section>
+
+    <section id="process" class="process section-pad">
+      <div class="section-label">03 / Process</div>
+      <div class="process-layout">
+        <div>
+          <h2>From sketch to product story.</h2>
+          <p>The project begins as form exploration: shelf presence, airflow, ports, CMF, and interaction. The goal is not just a nice render — it is a believable product narrative.</p>
+        </div>
+        <img src="assets/optimized/Prod_Base_sketches.webp" alt="Industrial design ideation sketches for the product" />
+      </div>
+    </section>
+
+    <section class="specs section-pad">
+      <div class="section-label">04 / Believable Flagship Specs</div>
+      <div class="spec-grid">
+        <div><strong>Wi‑Fi 7</strong><span>Tri-band / MLO / 320 MHz</span></div>
+        <div><strong>10G WAN/LAN</strong><span>Multi-gig home backbone</span></div>
+        <div><strong>4× 2.5G LAN</strong><span>Wired devices and NAS support</span></div>
+        <div><strong>Mesh Ready</strong><span>Designed for open shelf placement</span></div>
+      </div>
+    </section>
+  </main>
+
+  <footer id="contact" class="footer section-pad">
+    <p>Designed and visualized by</p>
+    <h2>Michael Altuna</h2>
+    <p>Environment Artist • Product Visualization</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
