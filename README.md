@@ -1,11 +1,10 @@
 # Premium Home Networking — Industrial Design Exploration
 
-Static HTML/CSS/JS site. Vercel-ready.
+Static HTML site ready for Vercel.
 
 ## Deploy on Vercel
-- Framework Preset: **Other**
-- Build Command: leave blank
-- Output Directory: leave blank
-- Install Command: leave blank
+- Framework preset: Other
+- Build command: leave blank
+- Output directory: leave blank
 
-The site uses `index.html` and the `/assets` folder directly.
+Upload the whole folder or connect it through GitHub.
