@@ -3,105 +3,281 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>HI-re M3 Router</title>
-  <meta name="description" content="HI-re M3 — a premium Wi‑Fi 7 router concept designed to belong in the home." />
-  <link rel="preload" href="assets/front-base.webp" as="image" />
-  <link rel="preload" href="assets/bamboo.webp" as="image" />
-  <link rel="stylesheet" href="styles.css" />
+  <title>Premium Home Networking — Industrial Design Exploration</title>
+  <meta name="description" content="Industrial design exploration for premium home networking hardware." />
+  <style>
+    :root{
+      --bg:#f6f3ee;
+      --paper:#fffdf8;
+      --ink:#12110f;
+      --muted:#736f68;
+      --line:rgba(18,17,15,.12);
+      --soft:rgba(18,17,15,.06);
+      --chip:#ebe5dc;
+      --chipActive:#151411;
+      --max:1440px;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      color:var(--ink);
+      background:
+        linear-gradient(rgba(18,17,15,.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(18,17,15,.025) 1px, transparent 1px),
+        var(--bg);
+      background-size:48px 48px;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      overflow-x:hidden;
+    }
+    img{max-width:100%;display:block}
+    button{font:inherit}
+    .shell{width:min(var(--max), calc(100% - 48px)); margin:0 auto}
+    .topbar{
+      position:fixed;top:0;left:0;right:0;z-index:40;
+      backdrop-filter: blur(18px);
+      background:rgba(246,243,238,.72);
+      border-bottom:1px solid rgba(18,17,15,.07);
+    }
+    .topbar-inner{height:58px;display:flex;align-items:center;justify-content:space-between;gap:24px}
+    .brand{font-size:13px;letter-spacing:.16em;text-transform:uppercase;font-weight:650}
+    .nav{display:flex;gap:22px;font-size:13px;color:var(--muted)}
+    .nav a{color:inherit;text-decoration:none}.nav a:hover{color:var(--ink)}
+
+    .hero{
+      min-height:100svh;
+      padding:92px 0 46px;
+      display:grid;
+      align-items:center;
+    }
+    .hero-grid{
+      display:grid;
+      grid-template-columns: 22% 56% 22%;
+      align-items:center;
+      gap:0;
+    }
+    .intro{align-self:center;padding-right:12px}
+    .eyebrow{font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:20px}
+    h1{font-size:clamp(48px, 6vw, 92px);line-height:.92;letter-spacing:-.065em;margin:0 0 18px;font-weight:760}
+    .subtitle{font-size:clamp(18px, 1.7vw, 25px);line-height:1.22;letter-spacing:-.035em;margin:0 0 20px;color:#27241f;font-weight:520}
+    .brief{font-size:15px;line-height:1.65;color:var(--muted);max-width:330px;margin:0}
+    .spec-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px;max-width:330px}
+    .spec-pill{font-size:12px;padding:8px 10px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.32);color:#3a3732;white-space:nowrap}
+
+    .viewer-wrap{
+      position:relative;
+      min-height:78svh;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      overflow:visible;
+    }
+    .product-stage{
+      width:min(96%, 760px);
+      height:min(82svh, 860px);
+      position:relative;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      transform:translateX(-1.5%);
+      filter: drop-shadow(0 46px 48px rgba(55,45,30,.16));
+    }
+    .product-stage::after{
+      content:"";position:absolute;left:50%;bottom:4%;width:44%;height:7%;transform:translateX(-50%);
+      background:radial-gradient(ellipse at center, rgba(50,40,24,.22), transparent 68%);
+      filter:blur(22px);z-index:-1;opacity:.62;
+    }
+    .product-layer{
+      position:absolute;inset:0;margin:auto;width:100%;height:100%;object-fit:contain;object-position:center center;
+      transition:opacity .28s ease, transform .34s ease;
+      transform:scale(1.06);
+    }
+    .base{opacity:1}.overlay{opacity:0}.overlay.active{opacity:1}.rear-img{opacity:0}.view-rear .front-img{opacity:0}.view-rear .overlay{opacity:0!important}.view-rear .rear-img{opacity:1}
+
+    .controls{align-self:center;padding-left:6px;max-width:330px}
+    .control-block{margin-bottom:28px}.label{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);font-weight:800;margin-bottom:12px}
+    .chips{display:flex;gap:8px;flex-wrap:wrap}.chip,.seg-btn{
+      border:1px solid var(--line);background:rgba(255,255,255,.38);border-radius:999px;padding:10px 12px;color:#34312c;cursor:pointer;
+      transition:background .2s ease,color .2s ease,border-color .2s ease,transform .2s ease,opacity .2s ease;
+      font-size:13px;line-height:1;
+    }
+    .chip:hover,.seg-btn:hover{transform:translateY(-1px);background:rgba(255,255,255,.68)}
+    .chip.active,.seg-btn.active{background:var(--chipActive);border-color:var(--chipActive);color:#fff}
+    .chips.disabled{opacity:.36;pointer-events:none}.hint{font-size:12px;color:var(--muted);margin-top:10px;display:none}.view-rear ~ .controls .hint{display:block}
+    .segment{display:inline-flex;gap:4px;padding:4px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.36)}
+    .seg-btn{border:none;background:transparent}.seg-btn.active{background:#151411;color:#fff}
+    .micro-copy{margin-top:26px;padding-top:24px;border-top:1px solid var(--line);font-size:14px;line-height:1.6;color:var(--muted)}
+
+    section{padding:92px 0}.section-head{display:flex;justify-content:space-between;gap:28px;align-items:end;margin-bottom:34px}
+    h2{font-size:clamp(34px,4vw,68px);line-height:.95;letter-spacing:-.055em;margin:0;font-weight:760;max-width:760px}
+    .section-kicker{font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);font-weight:800;margin-bottom:14px}
+    .section-copy{font-size:16px;line-height:1.72;color:var(--muted);max-width:560px;margin:0}
+    .full-bleed-img{width:100%;border-radius:28px;overflow:hidden;background:#e8e1d6;box-shadow:0 34px 90px rgba(40,32,22,.12)}
+    .full-bleed-img img{width:100%;height:auto;object-fit:cover}
+    .sketch-card{border-radius:28px;overflow:hidden;background:#fff;box-shadow:0 30px 80px rgba(40,32,22,.1);border:1px solid rgba(18,17,15,.08)}
+    .triptych{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.detail-card{background:#eee7dd;border-radius:24px;overflow:hidden;position:relative;box-shadow:0 24px 70px rgba(40,32,22,.1)}
+    .detail-card img{width:100%;aspect-ratio:1/1;object-fit:cover}.detail-caption{padding:18px 18px 20px;background:rgba(255,253,248,.86);border-top:1px solid rgba(18,17,15,.06)}
+    .detail-caption h3{font-size:16px;letter-spacing:-.025em;margin:0 0 6px}.detail-caption p{font-size:13px;line-height:1.5;color:var(--muted);margin:0}
+    .philosophy{padding:110px 0}.pullquote{font-size:clamp(44px,7vw,112px);line-height:.9;letter-spacing:-.07em;font-weight:760;max-width:1120px;margin:0}.pullquote span{color:var(--muted)}
+    .engineering{border-top:1px solid var(--line);padding-bottom:64px}.spec-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}.spec-card{border:1px solid var(--line);border-radius:22px;padding:22px;background:rgba(255,255,255,.34)}
+    .spec-card strong{display:block;font-size:18px;margin-bottom:8px;letter-spacing:-.03em}.spec-card span{font-size:13px;color:var(--muted);line-height:1.45}
+    footer{height:80px}
+    @media (max-width: 1040px){
+      .hero{padding-top:84px}.hero-grid{grid-template-columns:1fr;gap:22px}.intro,.controls{max-width:none;padding:0;text-align:left}.brief,.spec-row{max-width:680px}.viewer-wrap{min-height:58svh;order:2}.intro{order:1}.controls{order:3}.product-stage{width:min(92vw,620px);height:min(66svh,700px);transform:none}.controls{display:grid;grid-template-columns:1fr 1fr;gap:20px}.micro-copy{grid-column:1/-1;margin-top:0}.section-head{display:block}.section-copy{margin-top:18px}.spec-grid{grid-template-columns:repeat(2,1fr)}
+    }
+    @media (max-width: 680px){
+      .shell{width:min(100% - 28px, var(--max))}.nav{display:none}h1{font-size:48px}.hero{padding-top:78px}.product-stage{height:58svh}.controls{display:block}.triptych{grid-template-columns:1fr}.spec-grid{grid-template-columns:1fr}section{padding:62px 0}.full-bleed-img,.sketch-card,.detail-card{border-radius:18px}.pullquote{font-size:46px}.section-head{margin-bottom:24px}
+    }
+  </style>
 </head>
 <body>
+  <header class="topbar">
+    <div class="shell topbar-inner">
+      <div class="brand">Premium Home Networking</div>
+      <nav class="nav"><a href="#process">Process</a><a href="#details">Details</a><a href="#context">Context</a><a href="#engineering">Engineering</a></nav>
+    </div>
+  </header>
+
   <main>
-    <section class="hero" id="top">
-      <div class="copy">
-        <p class="eyebrow">Premium Wi‑Fi 7 Router</p>
-        <h1>HI-re M3</h1>
-        <p class="tagline">Designed to Belong.</p>
-        <div class="specs" aria-label="Technical specifications">
-          <span>Wi‑Fi 7 BE19000</span>
-          <span>10 Gb WAN/LAN</span>
-          <span>4×2.5 Gb LAN</span>
-          <span>Mesh Ready</span>
-        </div>
-      </div>
-
-      <div class="product-area" aria-label="Product viewer">
-        <div class="product-stage" id="productStage">
-          <img class="product-layer base front-base" src="assets/front-base.webp" alt="HI-re M3 front base" />
-          <img class="product-layer overlay" data-finish="black" src="assets/black.webp" alt="Obsidian finish overlay" />
-          <img class="product-layer overlay" data-finish="white" src="assets/white.webp" alt="White finish overlay" />
-          <img class="product-layer overlay" data-finish="rose" src="assets/rose.webp" alt="Rose finish overlay" />
-          <img class="product-layer overlay" data-finish="glass" src="assets/glass.webp" alt="Glass finish overlay" />
-          <img class="product-layer overlay" data-finish="teal" src="assets/teal.webp" alt="Teal finish overlay" />
-          <img class="product-layer overlay active" data-finish="bamboo" src="assets/bamboo.webp" alt="Bamboo finish overlay" />
-          <img class="product-layer rear" src="assets/rear.webp" alt="HI-re M3 rear port view" />
-        </div>
-      </div>
-
-      <aside class="controls" aria-label="Product configurator">
-        <div class="segmented" role="tablist" aria-label="View selector">
-          <button class="seg active" data-view="front" type="button">Front</button>
-          <button class="seg" data-view="rear" type="button">Rear</button>
-        </div>
-
-        <div class="finish-panel" id="finishPanel">
-          <p class="control-label">Crafted in</p>
-          <h2 class="finish-name" id="finishName">Bamboo</h2>
-          <p class="rear-note" id="rearNote">Finish options are shown on the front view.</p>
-
-          <div class="chips" id="finishChips">
-            <button class="chip" data-finish="natural" type="button"><span class="dot natural"></span>Natural</button>
-            <button class="chip" data-finish="black" type="button"><span class="dot black"></span>Obsidian</button>
-            <button class="chip" data-finish="white" type="button"><span class="dot white"></span>White</button>
-            <button class="chip" data-finish="rose" type="button"><span class="dot rose"></span>Rose</button>
-            <button class="chip" data-finish="glass" type="button"><span class="dot glass"></span>Glass</button>
-            <button class="chip" data-finish="teal" type="button"><span class="dot teal"></span>Teal</button>
-            <button class="chip active" data-finish="bamboo" type="button"><span class="dot bamboo"></span>Bamboo</button>
+    <section class="hero shell" id="top">
+      <div class="hero-grid">
+        <div class="intro">
+          <div class="eyebrow">Industrial Design Exploration</div>
+          <h1>Premium Home Networking</h1>
+          <p class="subtitle">Designing networking hardware that deserves to be displayed—not hidden.</p>
+          <p class="brief">A visual exploration of calm technology, architectural form, and premium product presentation for the modern home.</p>
+          <div class="spec-row">
+            <span class="spec-pill">Wi‑Fi 7</span><span class="spec-pill">10 Gb WAN/LAN</span><span class="spec-pill">4×2.5 Gb LAN</span><span class="spec-pill">Mesh Ready</span>
           </div>
         </div>
-      </aside>
-    </section>
 
-    <section class="statement">
-      <h2>Technology should become quieter as it becomes more capable.</h2>
-      <p>HI-re M3 explores a router designed for display, not concealment — a connected object that belongs beside books, furniture, and the spaces people actually live in.</p>
-    </section>
+        <div class="viewer-wrap" id="viewerWrap">
+          <div class="product-stage front-img" id="stage">
+            <img class="product-layer base" src="assets/Prod_Base_Front.png" alt="front base router render" />
+            <img class="product-layer overlay active" data-finish="natural" src="assets/Prod_Base_Front.png" alt="natural aluminum finish" />
+            <img class="product-layer overlay" data-finish="black" src="assets/Prod_Base_Front_black.png" alt="obsidian finish" />
+            <img class="product-layer overlay" data-finish="white" src="assets/Prod_Base_Front_white.png" alt="white finish" />
+            <img class="product-layer overlay" data-finish="rose" src="assets/Prod_Base_Front_rose.png" alt="rose finish" />
+            <img class="product-layer overlay" data-finish="glass" src="assets/Prod_Base_Front_glass.png" alt="glass finish" />
+            <img class="product-layer overlay" data-finish="teal" src="assets/Prod_Base_Front_teal.png" alt="teal finish" />
+            <img class="product-layer overlay" data-finish="bamboo" src="assets/Prod_Base_Front_wood.png" alt="bamboo finish" />
+            <img class="product-layer rear-img" src="assets/Prod_Base_Back.png" alt="rear view of router" />
+          </div>
+        </div>
 
-    <section class="wide-image">
-      <div class="section-head">
-        <p class="eyebrow">Home</p>
-        <h2>Designed for the shelf, not the closet.</h2>
+        <aside class="controls">
+          <div class="control-block">
+            <div class="label">Crafted In</div>
+            <div class="chips" id="finishChips">
+              <button class="chip active" data-finish="natural">Natural</button>
+              <button class="chip" data-finish="black">Obsidian</button>
+              <button class="chip" data-finish="white">White</button>
+              <button class="chip" data-finish="rose">Rose</button>
+              <button class="chip" data-finish="glass">Glass</button>
+              <button class="chip" data-finish="teal">Teal</button>
+              <button class="chip" data-finish="bamboo">Bamboo</button>
+            </div>
+            <div class="hint" id="rearHint">Finish options are shown on the front view.</div>
+          </div>
+          <div class="control-block">
+            <div class="label">View</div>
+            <div class="segment">
+              <button class="seg-btn active" data-view="front">Front</button>
+              <button class="seg-btn" data-view="rear">Rear</button>
+            </div>
+          </div>
+          <p class="micro-copy">Restrained materials, passive ventilation, and a single ambient status light create a router intended to live comfortably beside books, ceramics, and everyday objects.</p>
+        </aside>
       </div>
-      <img src="assets/home.webp" alt="HI-re M3 router displayed in a warm home setting" />
     </section>
 
-    <section class="wide-image">
-      <div class="section-head">
-        <p class="eyebrow">Workspace</p>
-        <h2>Calm hardware for modern work.</h2>
-      </div>
-      <img src="assets/office.webp" alt="HI-re M3 router displayed in a clean office setting" />
+    <section class="philosophy shell">
+      <p class="pullquote">Technology should become <span>quieter</span> as it becomes more capable.</p>
     </section>
 
-    <section class="process">
+    <section class="shell" id="context">
       <div class="section-head">
-        <p class="eyebrow">Process</p>
-        <h2>From object study to product language.</h2>
+        <div><div class="section-kicker">01 — Context</div><h2>Designed to Belong</h2></div>
+        <p class="section-copy">Most routers are treated like infrastructure—hidden behind desks, televisions, and furniture. This exploration asks what happens when networking hardware is designed as a considered object within the home.</p>
       </div>
-      <img src="assets/sketches.webp" alt="Industrial design sketch sheet for HI-re M3" />
+      <div class="full-bleed-img"><img src="assets/productshot1.png" alt="router displayed in a home interior setting" loading="lazy" /></div>
     </section>
 
-    <section class="engineering">
+    <section class="shell" id="process">
       <div class="section-head">
-        <p class="eyebrow">Engineering</p>
-        <h2>Quiet interface. Serious connectivity.</h2>
+        <div><div class="section-kicker">02 — Process</div><h2>Form Exploration</h2></div>
+        <p class="section-copy">Early concepts explored vertical proportions, hidden antennas, integrated thermal paths, and simplified interaction. The goal was a product that feels closer to furniture and premium audio than conventional networking hardware.</p>
       </div>
-      <div class="feature-grid">
-        <article><h3>Ambient light bar</h3><p>A single diffused line communicates status without a screen, clock, or visual noise.</p></article>
-        <article><h3>Passive thermal grille</h3><p>The front architecture manages airflow while giving the product its visual identity.</p></article>
-        <article><h3>Multi‑gig ports</h3><p>10 Gb WAN/LAN, 4×2.5 Gb LAN, USB‑C service, and mesh-ready backhaul.</p></article>
+      <div class="sketch-card"><img src="assets/Prod_Base_sketches.png" alt="industrial design sketch exploration sheet" loading="lazy" /></div>
+    </section>
+
+    <section class="shell" id="details">
+      <div class="section-head">
+        <div><div class="section-kicker">03 — Details</div><h2>Precision in the Details</h2></div>
+        <p class="section-copy">The detail studies focus on the physical moments that communicate quality: tactility, machining, material transitions, and ventilation that feels integrated rather than applied.</p>
+      </div>
+      <div class="triptych">
+        <article class="detail-card"><img src="assets/detail_knob.png" alt="knurled control dial detail" loading="lazy" /><div class="detail-caption"><h3>Diamond-Knurled Control Dial</h3><p>A single tactile control creates an intentional point of interaction.</p></div></article>
+        <article class="detail-card"><img src="assets/detail_corner.png" alt="machined chassis corner detail" loading="lazy" /><div class="detail-caption"><h3>Precision-Machined Chassis</h3><p>Soft radii and subtle chamfers reduce visual noise while preserving structure.</p></div></article>
+        <article class="detail-card"><img src="assets/detail_top.png" alt="architectural thermal venting detail" loading="lazy" /><div class="detail-caption"><h3>Architectural Thermal Venting</h3><p>Ventilation becomes part of the form language rather than a technical afterthought.</p></div></article>
+      </div>
+    </section>
+
+    <section class="shell">
+      <div class="section-head">
+        <div><div class="section-kicker">04 — Workspace</div><h2>At Home in Creative Spaces</h2></div>
+        <p class="section-copy">A restrained silhouette and premium CMF direction allow the object to sit naturally in a modern workspace without becoming a visual distraction.</p>
+      </div>
+      <div class="full-bleed-img"><img src="assets/productshot2.png" alt="router in a modern office setting" loading="lazy" /></div>
+    </section>
+
+    <section class="shell engineering" id="engineering">
+      <div class="section-head">
+        <div><div class="section-kicker">05 — Engineering Intent</div><h2>Performance Without Visual Noise</h2></div>
+        <p class="section-copy">The concept balances flagship connectivity with a simplified exterior language: concealed antennas, passive cooling, and a focused rear I/O layout.</p>
+      </div>
+      <div class="spec-grid">
+        <div class="spec-card"><strong>Wi‑Fi 7</strong><span>Flagship wireless performance with modern multi-link capability.</span></div>
+        <div class="spec-card"><strong>10 Gb</strong><span>High-speed WAN/LAN connectivity for demanding home networks.</span></div>
+        <div class="spec-card"><strong>4×2.5 Gb</strong><span>Multi-gig wired ports for workstations, NAS, and game consoles.</span></div>
+        <div class="spec-card"><strong>Mesh Ready</strong><span>Designed for whole-home coverage and simple expansion.</span></div>
+        <div class="spec-card"><strong>USB‑C</strong><span>Clean service and accessory connection without visual clutter.</span></div>
       </div>
     </section>
   </main>
-  <script src="script.js"></script>
+  <footer></footer>
+
+  <script>
+    const stage = document.getElementById('stage');
+    const chips = [...document.querySelectorAll('.chip')];
+    const overlays = [...document.querySelectorAll('.overlay')];
+    const viewBtns = [...document.querySelectorAll('.seg-btn')];
+    const finishChips = document.getElementById('finishChips');
+    const rearHint = document.getElementById('rearHint');
+    let currentFinish = 'natural';
+    let currentView = 'front';
+
+    function setFinish(finish){
+      if(currentView === 'rear') return;
+      currentFinish = finish;
+      chips.forEach(c => c.classList.toggle('active', c.dataset.finish === finish));
+      overlays.forEach(o => o.classList.toggle('active', o.dataset.finish === finish));
+    }
+    function setView(view){
+      currentView = view;
+      stage.classList.toggle('view-rear', view === 'rear');
+      viewBtns.forEach(b => b.classList.toggle('active', b.dataset.view === view));
+      finishChips.classList.toggle('disabled', view === 'rear');
+      rearHint.style.display = view === 'rear' ? 'block' : 'none';
+    }
+    chips.forEach(chip => chip.addEventListener('click', () => setFinish(chip.dataset.finish)));
+    viewBtns.forEach(btn => btn.addEventListener('click', () => setView(btn.dataset.view)));
+
+    document.addEventListener('keydown', (e)=>{
+      const idx = chips.findIndex(c => c.dataset.finish === currentFinish);
+      if(e.key === 'ArrowRight' && currentView === 'front') setFinish(chips[(idx+1)%chips.length].dataset.finish);
+      if(e.key === 'ArrowLeft' && currentView === 'front') setFinish(chips[(idx-1+chips.length)%chips.length].dataset.finish);
+    });
+  </script>
 </body>
 </html>

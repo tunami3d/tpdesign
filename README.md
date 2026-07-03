@@ -1,8 +1,11 @@
-# HI-re M3 Vercel v4
+# Premium Home Networking — Industrial Design Exploration
 
-Static Vercel-ready microsite.
+Static HTML/CSS/JS site. Vercel-ready.
 
-Deploy settings:
-- Framework preset: Other
-- Build command: leave blank
-- Output directory: leave blank
+## Deploy on Vercel
+- Framework Preset: **Other**
+- Build Command: leave blank
+- Output Directory: leave blank
+- Install Command: leave blank
+
+The site uses `index.html` and the `/assets` folder directly.
