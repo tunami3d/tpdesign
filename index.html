@@ -1,998 +1,202 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ROOK — Autonomous Drone Support Platform · Concept by Michael Altuna</title>
-<meta name="description" content="ROOK A03 — an autonomous 4×4 UGV concept that deploys, recovers, and sustains Ghost-class reconnaissance drones in the field. Design study by Michael Altuna.">
-<meta property="og:title" content="ROOK — Autonomous Drone Support Platform">
-<meta property="og:description" content="Deploy, recover, and sustain unmanned systems in contested environments. A concept design study.">
-<meta property="og:image" content="assets/img/studio_close.jpg">
-<meta property="og:type" content="website">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='8' y='8' width='16' height='16' transform='rotate(45 16 16)' fill='none' stroke='%23D3A017' stroke-width='2.5'/%3E%3Crect x='13' y='13' width='6' height='6' transform='rotate(45 16 16)' fill='%23D3A017'/%3E%3C/svg%3E">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-<style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  :root {
-    --bg:        #060708;
-    --surface:   #0B0D10;
-    --panel:     #10131A;
-    --panel-2:   #151922;
-    --border:    #1D222B;
-    --border-hi: #2A3140;
-    --gold:      #D3A017;
-    --gold-hi:   #F2C239;
-    --gold-dim:  #6E5410;
-    --white:     #EDEFF4;
-    --grey:      #8A92A6;
-    --muted:     #4A5164;
-    --ok:        #4A9B6E;
-    --red:       #C23B3B;
-  }
-
-  ::selection { background: var(--gold); color: #000; }
-  html { scroll-behavior: smooth; }
-
-  body {
-    background: var(--bg);
-    color: var(--white);
-    font-family: 'Inter', sans-serif;
-    font-size: 15px;
-    line-height: 1.6;
-    overflow-x: hidden;
-  }
-  body::before {
-    content: '';
-    position: fixed; inset: 0; z-index: 0; pointer-events: none;
-    background-image:
-      linear-gradient(rgba(42,49,64,0.06) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(42,49,64,0.06) 1px, transparent 1px);
-    background-size: 48px 48px;
-  }
-  main { position: relative; z-index: 1; }
-  .mono { font-family: 'JetBrains Mono', monospace; }
-
-  /* ═══ NAV ═══ */
-  nav {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 0 32px; height: 60px;
-    background: rgba(6,7,8,0.82); backdrop-filter: blur(16px);
-    border-bottom: 1px solid var(--border);
-  }
-  .nav-brand { display: flex; align-items: center; gap: 14px; }
-  .nav-diamond { width: 22px; height: 22px; border: 1.5px solid var(--gold); transform: rotate(45deg); display: flex; align-items: center; justify-content: center; }
-  .nav-diamond::after { content: ''; width: 7px; height: 7px; background: var(--gold); }
-  .nav-title { font-family: 'Rajdhani', sans-serif; font-size: 17px; font-weight: 700; letter-spacing: 4px; }
-  .nav-title span { color: var(--gold); }
-  .nav-links { display: flex; gap: 4px; }
-  .nav-links a {
-    font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--grey);
-    letter-spacing: 1.5px; text-decoration: none; padding: 8px 13px; transition: 0.2s;
-  }
-  .nav-links a::before { content: '// '; color: var(--gold-dim); }
-  .nav-links a:hover { color: var(--white); background: var(--panel); }
-  .nav-links a:hover::before { color: var(--gold); }
-  .nav-doc { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 1px; }
-  .nav-doc b { color: var(--gold); font-weight: 500; }
-
-  /* ═══ HERO TITLE OVERLAY (on scrub) ═══ */
-  .scrub-title {
-    position: absolute; left: 56px; bottom: 96px; z-index: 6;
-    will-change: opacity, transform;
-  }
-  .scrub-title .eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--gold); letter-spacing: 3px; display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
-  .scrub-title .eyebrow::before { content: ''; width: 32px; height: 1px; background: var(--gold); }
-  .scrub-title h1 { font-family: 'Rajdhani', sans-serif; font-size: clamp(56px, 8vw, 110px); font-weight: 700; letter-spacing: 3px; line-height: 0.95; text-shadow: 0 4px 30px rgba(0,0,0,0.6); }
-  .scrub-title h1 b { color: var(--gold); font-weight: 700; }
-  .scrub-title .sub { font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 4px; color: var(--grey); margin-top: 10px; }
-  .hero-quick { display: flex; gap: 2px; margin-top: 26px; flex-wrap: wrap; }
-  .hq { background: rgba(16,19,26,0.82); backdrop-filter: blur(6px); border: 1px solid var(--border); padding: 12px 20px 10px; }
-  .hq:first-child { border-left: 2px solid var(--gold); }
-  .hq-n { font-family: 'Rajdhani', sans-serif; font-size: 26px; font-weight: 700; line-height: 1; }
-  .hq-u { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--gold); margin-left: 2px; }
-  .hq-l { font-family: 'JetBrains Mono', monospace; font-size: 8.5px; color: var(--muted); letter-spacing: 1.5px; margin-top: 3px; }
-
-  /* callouts */
-  .co-svg { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; z-index: 4; }
-  .co-svg line { stroke: var(--gold); stroke-width: 1.2; }
-  .co-dot {
-    position: absolute; width: 12px; height: 12px; transform: translate(-50%, -50%);
-    z-index: 4; pointer-events: none;
-  }
-  .co-dot::before { content: ''; position: absolute; inset: 3px; background: var(--gold); border-radius: 50%; }
-  .co-dot::after {
-    content: ''; position: absolute; inset: -3px; border: 1px solid var(--gold); border-radius: 50%;
-    animation: ping 2.2s ease-out infinite;
-  }
-  @keyframes ping { 0% { transform: scale(0.6); opacity: 1; } 100% { transform: scale(1.9); opacity: 0; } }
-  .co-label {
-    position: absolute; z-index: 5; transform: translate(-50%, -50%);
-    background: rgba(6,7,8,0.88); border: 1px solid var(--gold-dim);
-    padding: 6px 10px 5px; pointer-events: none; min-width: 110px;
-  }
-  .co-label .co-t { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 700; letter-spacing: 1.5px; color: var(--gold); display: block; white-space: nowrap; }
-  .co-label .co-s { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1px; color: var(--grey); display: block; white-space: nowrap; margin-top: 1px; }
-  .co-item { opacity: 0; transition: opacity 0.45s ease; }
-  .co-item.on { opacity: 1; }
-
-  /* ═══ TICKER (static) ═══ */
-  .ticker { background: var(--gold); padding: 10px 24px; position: relative; z-index: 2; }
-  .ticker-track { display: flex; gap: 28px; justify-content: center; flex-wrap: wrap; }
-  .ticker span { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; color: #0B0800; letter-spacing: 2px; white-space: nowrap; }
-
-  /* ═══ SCRUB WALKAROUND ═══ */
-  .scrub-wrap { height: 340vh; position: relative; background: #000; border-bottom: 1px solid var(--border); }
-  .scrub-sticky { position: sticky; top: 0; height: 100vh; overflow: hidden; }
-  .scrub-sticky canvas { width: 100%; height: 100%; display: block; }
-  .scrub-hud {
-    position: absolute; top: 80px; left: 32px; z-index: 5;
-    font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 2px; color: var(--gold);
-    background: rgba(6,7,8,0.6); border: 1px solid var(--gold-dim); padding: 6px 12px;
-  }
-  .scrub-cue {
-    position: absolute; bottom: 28px; left: 50%; transform: translateX(-50%); z-index: 5;
-    font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 3px; color: var(--grey);
-    display: flex; align-items: center; gap: 10px;
-  }
-  .scrub-cue::before, .scrub-cue::after { content: ''; width: 28px; height: 1px; background: var(--gold-dim); }
-  .scrub-track { position: absolute; bottom: 0; left: 0; right: 0; height: 3px; background: rgba(29,34,43,0.6); z-index: 5; }
-  .scrub-fill { height: 100%; width: 0%; background: var(--gold); }
-
-  /* ═══ SECTIONS ═══ */
-  section { padding: 96px 56px; position: relative; }
-  .sec-head { display: flex; align-items: flex-start; gap: 24px; margin-bottom: 48px; }
-  .sec-num { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--gold); letter-spacing: 2px; padding: 6px 12px; border: 1px solid var(--gold-dim); white-space: nowrap; margin-top: 8px; }
-  .sec-eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--grey); letter-spacing: 3px; margin-bottom: 8px; }
-  .sec-eyebrow::after { content: ' ///'; color: var(--gold-dim); }
-  .sec-title { font-family: 'Rajdhani', sans-serif; font-size: clamp(34px, 4.5vw, 56px); font-weight: 700; letter-spacing: 1px; line-height: 1.02; }
-  .sec-title em { font-style: normal; color: var(--gold); }
-
-  /* ═══ ORIGIN ═══ */
-  .origin-grid { display: grid; grid-template-columns: 0.9fr 1.4fr; gap: 3px; margin-bottom: 3px; }
-  .origin-chess { background: var(--panel); border: 1px solid var(--border); padding: 40px; display: flex; flex-direction: column; align-items: center; gap: 20px; }
-  .chess-frame { position: relative; padding: 26px; }
-  .chess-frame::before, .chess-frame::after { content: ''; position: absolute; width: 18px; height: 18px; }
-  .chess-frame::before { top: 0; left: 0; border-top: 2px solid var(--gold); border-left: 2px solid var(--gold); }
-  .chess-frame::after { bottom: 0; right: 0; border-bottom: 2px solid var(--gold); border-right: 2px solid var(--gold); }
-  .origin-word { font-family: 'Rajdhani', sans-serif; font-size: 34px; font-weight: 700; letter-spacing: 8px; }
-  .origin-body { background: var(--panel); border: 1px solid var(--border); padding: 40px 44px; display: flex; flex-direction: column; justify-content: center; }
-  .origin-body p { color: var(--grey); font-size: 15px; line-height: 1.85; margin-bottom: 14px; }
-  .origin-body strong { color: var(--white); }
-  .chess-traits { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 28px; margin: 10px 0 16px; }
-  .trait { font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 2px; color: var(--gold); }
-  .trait::before { content: '\00BB  '; color: var(--grey); }
-  .roles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 3px; }
-  .role { background: var(--panel); border: 1px solid var(--border); padding: 28px 24px; transition: border-color 0.25s, transform 0.25s; }
-  .role:hover { border-color: var(--gold-dim); transform: translateY(-2px); }
-  .role-icon { width: 44px; height: 44px; border: 1px solid var(--gold-dim); display: flex; align-items: center; justify-content: center; margin-bottom: 16px; }
-  .role-title { font-family: 'Rajdhani', sans-serif; font-size: 19px; font-weight: 700; letter-spacing: 1px; margin-bottom: 6px; }
-  .role-body { font-size: 13px; color: var(--grey); line-height: 1.7; }
-  .why { margin-top: 3px; background: var(--panel); border: 1px solid var(--border); border-left: 3px solid var(--gold); padding: 34px 44px; display: flex; justify-content: space-between; align-items: center; gap: 32px; flex-wrap: wrap; }
-  .why-text { font-family: 'Rajdhani', sans-serif; font-size: clamp(20px, 2.4vw, 28px); font-weight: 600; line-height: 1.4; max-width: 760px; }
-  .why-text em { font-style: normal; color: var(--gold); }
-  .why-tag { font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 3px; color: var(--gold); white-space: nowrap; }
-
-  /* ═══ GALLERY ═══ */
-  .gallery { padding: 0; position: relative; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
-  .gallery-slideshow { position: relative; width: 100%; background: #000; }
-  .gallery-slide { position: absolute; top: 0; left: 0; width: 100%; opacity: 0; transition: opacity 1s ease; }
-  .gallery-slide.active { opacity: 1; position: relative; }
-  .gallery-slide img { width: 100%; height: auto; display: block; }
-  .gallery-label {
-    position: absolute; bottom: 0; left: 0; right: 0; padding: 20px 32px;
-    background: linear-gradient(to top, rgba(6,7,8,0.92), transparent);
-    font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 2.5px;
-    display: flex; align-items: center; gap: 12px;
-  }
-  .gallery-label::before { content: ''; width: 8px; height: 8px; background: var(--gold); transform: rotate(45deg); }
-  .gallery-label i { font-style: normal; color: var(--gold); }
-  .gallery-hud-tl, .gallery-hud-tr { position: absolute; top: 18px; z-index: 10; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.5px; }
-  .gallery-hud-tl { left: 32px; color: rgba(211,160,23,0.85); }
-  .gallery-hud-tr { right: 32px; color: var(--grey); }
-  .gallery-hud-tr b { color: var(--gold); font-weight: 500; }
-  .gallery-dots { position: absolute; bottom: 22px; right: 32px; display: flex; gap: 8px; z-index: 10; }
-  .gallery-dot { width: 20px; height: 4px; background: var(--border-hi); cursor: pointer; transition: background 0.3s; }
-  .gallery-dot.active { background: var(--gold); }
-  .gallery-progress { position: absolute; bottom: 0; left: 0; height: 3px; background: var(--gold); z-index: 10; }
-
-  /* ═══ MOTION ═══ */
-  .motion-section { background: var(--surface); }
-  .vid-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; }
-  .vid-cell { position: relative; background: var(--panel); border: 1px solid var(--border); overflow: hidden; }
-  .vid-cell video { width: 100%; height: auto; display: block; }
-  .vid-tag {
-    position: absolute; top: 12px; left: 12px; z-index: 3;
-    font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1.5px;
-    color: var(--white); background: rgba(6,7,8,0.78); border: 1px solid var(--border-hi);
-    padding: 4px 10px;
-  }
-  .vid-tag b { color: var(--gold); font-weight: 700; }
-  .vid-rec { position: absolute; top: 14px; right: 14px; z-index: 3; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; background: rgba(6,7,8,0.78); border: 1px solid var(--border-hi); border-radius: 50%; }
-  .vid-rec::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: var(--red); animation: rec 1.6s ease-in-out infinite; }
-  @keyframes rec { 0%,100%{opacity:1} 50%{opacity:0.15} }
-
-  /* ═══ SPECS ═══ */
-  .stat-strip { display: grid; grid-template-columns: repeat(5, 1fr); gap: 3px; margin-bottom: 3px; }
-  .stat-card { background: var(--panel); border: 1px solid var(--border); padding: 24px 20px 20px; transition: border-color 0.25s; position: relative; overflow: hidden; }
-  .stat-card:hover { border-color: var(--gold-dim); }
-  .stat-card::after { content: ''; position: absolute; top: 0; right: 0; border-style: solid; border-width: 0 14px 14px 0; border-color: transparent var(--gold) transparent transparent; opacity: 0; transition: opacity 0.25s; }
-  .stat-card:hover::after { opacity: 1; }
-  .stat-num { font-family: 'Rajdhani', sans-serif; font-size: 40px; font-weight: 700; line-height: 1; }
-  .stat-unit { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--gold); margin-left: 3px; }
-  .stat-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 1.5px; margin-top: 8px; }
-  .specs-detail { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 3px; }
-  .specs-col { background: var(--panel); border: 1px solid var(--border); padding: 28px; }
-  .specs-col-title { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--gold); letter-spacing: 2px; margin-bottom: 18px; padding-bottom: 12px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 8px; }
-  .specs-col-title::before { content: ''; width: 6px; height: 6px; background: var(--gold); transform: rotate(45deg); }
-  .spec-row { display: flex; justify-content: space-between; align-items: baseline; padding: 7px 0; border-bottom: 1px solid rgba(29,34,43,0.5); }
-  .spec-row:last-child { border-bottom: none; }
-  .spec-row-label { font-size: 13px; color: var(--grey); }
-  .spec-row-val { font-family: 'JetBrains Mono', monospace; font-size: 13px; }
-  .spec-row-val.gold { color: var(--gold); }
-  .spec-note { margin-top: 18px; padding: 12px 14px; background: var(--bg); border: 1px solid var(--border); border-left: 2px solid var(--gold-dim); }
-  .spec-note-title { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--gold); letter-spacing: 1.5px; margin-bottom: 6px; }
-  .spec-note-body { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--grey); line-height: 1.8; }
-
-  /* ═══ BAY ═══ */
-  .bay-section { background: var(--surface); }
-  .bay-hero { position: relative; margin-bottom: 3px; border: 1px solid var(--border); }
-  .xray { position: relative; overflow: hidden; border: 1px solid var(--border); margin-bottom: 3px; cursor: ew-resize; user-select: none; touch-action: none; --x: 100%; }
-  .xray img { width: 100%; display: block; pointer-events: none; }
-  .xray-top { position: absolute; inset: 0; clip-path: inset(0 0 0 var(--x)); }
-  .xray-handle { position: absolute; top: 0; bottom: 0; left: var(--x); width: 2px; background: var(--gold); transform: translateX(-1px); }
-  .xray-grip {
-    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-    width: 34px; height: 34px; border-radius: 50%;
-    background: rgba(6,7,8,0.9); border: 1.5px solid var(--gold);
-    display: flex; align-items: center; justify-content: center;
-    color: var(--gold); font-size: 14px;
-  }
-  .xray-lab { position: absolute; bottom: 14px; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 2px; padding: 4px 10px; background: rgba(6,7,8,0.75); border: 1px solid var(--border-hi); color: var(--grey); }
-  .xray-lab-l { left: 14px; }
-  .xray-lab-r { right: 14px; color: #7FD4C8; border-color: rgba(127,212,200,0.3); }
-  .bay-hero img { width: 100%; display: block; }
-  .img-tag { position: absolute; top: 14px; left: 14px; font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1.5px; color: var(--gold); background: rgba(6,7,8,0.75); border: 1px solid var(--gold-dim); padding: 4px 10px; }
-  .bay-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 3px; }
-  .bay-card { background: var(--panel); border: 1px solid var(--border); padding: 26px 22px; transition: border-color 0.25s, transform 0.25s; }
-  .bay-card:hover { border-color: var(--gold-dim); transform: translateY(-2px); }
-  .bay-card-num { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--gold); letter-spacing: 1.5px; display: inline-block; border: 1px solid var(--gold-dim); padding: 3px 8px; margin-bottom: 14px; }
-  .bay-card-title { font-family: 'Rajdhani', sans-serif; font-size: 20px; font-weight: 700; letter-spacing: 1.5px; margin-bottom: 8px; }
-  .bay-card-body { font-size: 13px; color: var(--grey); line-height: 1.75; }
-
-  /* ═══ DEPLOYMENT ═══ */
-  .deploy-track { position: relative; display: grid; grid-template-columns: repeat(6, 1fr); gap: 3px; }
-  .deploy-step { background: var(--panel); border: 1px solid var(--border); padding: 22px 16px; transition: border-color 0.4s, background 0.4s; }
-  .deploy-step.live { border-color: var(--gold); background: var(--panel-2); }
-  .deploy-step-num { font-family: 'Rajdhani', sans-serif; font-size: 34px; font-weight: 700; color: transparent; -webkit-text-stroke: 1px var(--gold-dim); line-height: 1; margin-bottom: 12px; transition: 0.4s; }
-  .deploy-step.live .deploy-step-num { color: var(--gold); -webkit-text-stroke: 0; }
-  .deploy-step-title { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700; letter-spacing: 1.5px; margin-bottom: 6px; }
-  .deploy-step-sub { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: var(--muted); line-height: 1.6; }
-  .deploy-readout { margin-top: 28px; display: flex; justify-content: center; align-items: center; gap: 24px; font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 3px; color: var(--grey); }
-  .deploy-readout b { color: var(--gold); font-weight: 700; font-size: 16px; }
-  .deploy-bar { width: 200px; height: 3px; background: var(--border); position: relative; }
-  .deploy-bar-fill { position: absolute; inset: 0 auto 0 0; background: var(--gold); width: 0%; }
-
-  /* ═══ GRAPHIC SYSTEM ═══ */
-  .decal-section { background: var(--surface); border-top: 1px solid var(--border); }
-  .decal-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 3px; }
-  .decal-cell {
-    background: var(--panel); border: 1px solid var(--border);
-    padding: 22px 16px 14px; min-height: 158px;
-    display: flex; flex-direction: column; align-items: center; justify-content: space-between; gap: 14px;
-    transition: border-color 0.25s;
-  }
-  .decal-cell:hover { border-color: var(--gold-dim); }
-  .decal-cell img { max-width: 100%; max-height: 66px; object-fit: contain; flex: 1; }
-  .decal-name { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 1.5px; text-align: center; }
-  .decal-foot { margin-top: 3px; background: var(--panel); border: 1px solid var(--border); padding: 16px 22px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
-  .decal-foot span { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--grey); letter-spacing: 2px; }
-  .decal-foot b { color: var(--gold); font-weight: 500; }
-
-  /* ═══ DESIGNER ═══ */
-  .about-section { background: var(--surface); border-top: 1px solid var(--border); }
-  .about-grid { display: grid; grid-template-columns: 1.1fr 1fr; gap: 56px; align-items: start; }
-  .about-body { color: var(--grey); line-height: 1.95; font-size: 15px; }
-  .about-body p { margin-bottom: 18px; }
-  .about-body strong { color: var(--white); }
-  .about-quote { margin: 26px 0; padding: 18px 22px; border-left: 2px solid var(--gold); background: var(--panel); font-family: 'Rajdhani', sans-serif; font-size: 19px; font-weight: 600; letter-spacing: 0.5px; line-height: 1.5; }
-  .skills-list { display: flex; flex-direction: column; gap: 3px; }
-  .skill-item { padding: 14px 18px; background: var(--panel); border: 1px solid var(--border); transition: border-color 0.25s; }
-  .skill-item:hover { border-color: var(--gold-dim); }
-  .skill-top { display: flex; justify-content: space-between; margin-bottom: 8px; }
-  .skill-name { font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 1.5px; }
-  .skill-tag { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--gold); letter-spacing: 1.5px; }
-  .skill-bar { height: 3px; background: var(--border); overflow: hidden; }
-  .skill-bar-fill { height: 100%; background: linear-gradient(90deg, var(--gold-dim), var(--gold)); width: 0; transition: width 1.2s cubic-bezier(0.22,1,0.36,1); }
-
-  /* ═══ CONTACT ═══ */
-  .contact-section { border-top: 1px solid var(--border); text-align: center; padding: 110px 56px; }
-  .contact-eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--gold); letter-spacing: 4px; margin-bottom: 18px; }
-  .contact-name { font-family: 'Rajdhani', sans-serif; font-size: clamp(44px, 6vw, 80px); font-weight: 700; letter-spacing: 2px; line-height: 1; }
-  .contact-role { font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 3px; color: var(--grey); margin-top: 14px; }
-  .contact-links { margin-top: 40px; display: flex; justify-content: center; gap: 3px; flex-wrap: wrap; }
-  .contact-link {
-    font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 2px;
-    color: var(--white); text-decoration: none; padding: 16px 30px;
-    background: var(--panel); border: 1px solid var(--border);
-    transition: border-color 0.25s, background 0.25s, color 0.25s;
-    display: flex; align-items: center; gap: 10px;
-  }
-  .contact-link::before { content: ''; width: 7px; height: 7px; background: var(--gold); transform: rotate(45deg); }
-  .contact-link:hover { border-color: var(--gold); background: var(--panel-2); color: var(--gold-hi); }
-
-  footer { border-top: 1px solid var(--border); padding: 32px 56px; display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
-  .footer-badges { display: flex; gap: 28px; flex-wrap: wrap; }
-  .footer-badge { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--grey); letter-spacing: 1.5px; display: flex; align-items: center; gap: 8px; }
-  .footer-badge::before { content: ''; width: 7px; height: 7px; border: 1px solid var(--gold); transform: rotate(45deg); }
-  .footer-right { display: flex; align-items: center; gap: 20px; }
-  .barcode { display: flex; gap: 2px; align-items: flex-end; height: 22px; }
-  .barcode i { display: block; width: 2px; background: var(--muted); }
-  .footer-concept { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 2px; }
-
-  .reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.8s ease, transform 0.8s ease; }
-  .reveal.visible { opacity: 1; transform: translateY(0); }
-
-  @media (max-width: 960px) {
-    section { padding: 56px 22px; }
-    nav { padding: 0 18px; }
-    .nav-links { display: none; }
-    .scrub-title { left: 20px; bottom: 72px; right: 20px; }
-    .scrub-title h1 { font-size: clamp(44px, 12vw, 72px); }
-    .hq { padding: 10px 14px 8px; }
-    .co-label { min-width: 0; }
-    .co-label .co-s { display: none; }
-    .origin-grid, .about-grid { grid-template-columns: 1fr; gap: 24px; }
-    .roles, .stat-strip { grid-template-columns: 1fr 1fr; }
-    .specs-detail { grid-template-columns: 1fr; }
-    .bay-grid { grid-template-columns: 1fr 1fr; }
-    .vid-grid { grid-template-columns: 1fr; }
-    .deploy-track { grid-template-columns: 1fr 1fr; }
-    .decal-grid { grid-template-columns: repeat(2, 1fr); }
-    .contact-section { padding: 70px 22px; }
-    footer { padding: 24px 22px; }
-  }
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Premium Home Networking — Industrial Design Exploration</title>
+  <meta name="description" content="An industrial design exploration for premium home networking hardware." />
+  <style>
+    :root{
+      --bg:#f6f3ed;
+      --ink:#11100e;
+      --muted:#756f66;
+      --line:rgba(17,16,14,.11);
+      --soft:#e9e1d4;
+      --shadow:0 42px 90px rgba(45,38,28,.13);
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      background:
+        linear-gradient(rgba(18,17,15,.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(18,17,15,.025) 1px, transparent 1px),
+        var(--bg);
+      background-size:72px 72px;
+      color:var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      overflow-x:hidden;
+    }
+    body:before{content:"";position:fixed;inset:0;pointer-events:none;background:radial-gradient(circle at 48% 18%, rgba(255,255,255,.82), transparent 38%);z-index:-1}
+    img{display:block;max-width:100%}
+    .topbar{height:66px;display:flex;align-items:center;justify-content:space-between;padding:0 clamp(22px,6vw,118px);border-bottom:1px solid rgba(17,16,14,.08);background:rgba(246,243,237,.82);backdrop-filter:blur(14px);position:sticky;top:0;z-index:20}
+    .brand{font-size:13px;font-weight:900;letter-spacing:.22em;text-transform:uppercase}.nav{display:flex;gap:28px}.nav a{font-size:13px;color:var(--muted);text-decoration:none}.nav a:hover{color:var(--ink)}
+    .hero{min-height:calc(100vh - 66px);max-width:1720px;margin:0 auto;padding:clamp(44px,6vw,88px) clamp(22px,6vw,118px);display:grid;grid-template-columns:minmax(420px,520px) minmax(520px,680px) minmax(300px,370px);gap:clamp(24px,4vw,64px);align-items:center}
+    .eyebrow{font-size:12px;font-weight:900;letter-spacing:.24em;text-transform:uppercase;color:var(--muted);margin-bottom:24px}.titleBlock{min-width:0}.titleBlock h1{font-size:clamp(58px,4.9vw,86px);line-height:.92;letter-spacing:-.075em;margin:0 0 20px;max-width:560px}.titleBlock .sub{font-size:clamp(22px,1.75vw,31px);line-height:1.07;font-weight:900;letter-spacing:-.045em;margin:0 0 20px;max-width:430px}.titleBlock .body{font-size:16px;line-height:1.65;color:var(--muted);max-width:430px;margin:0}.productStage{display:grid;place-items:center;min-width:0}.viewer{position:relative;width:min(100%,670px);aspect-ratio:674/1000;filter:drop-shadow(0 38px 48px rgba(45,38,28,.16))}.viewer img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;transition:opacity .26s ease, transform .32s ease}.viewer:hover img{transform:translateY(-4px)}.overlay{opacity:1}
+    .controls{align-self:center;max-width:370px}.label{font-size:12px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:9px}.current{font-size:28px;font-weight:900;letter-spacing:-.05em;margin-bottom:16px}.finishList{display:grid;gap:10px}.finish{height:47px;border:1px solid var(--line);background:rgba(255,255,255,.23);border-radius:999px;display:flex;align-items:center;gap:14px;padding:0 18px;cursor:pointer;font-weight:850;font-size:14px;transition:transform .18s ease, background .18s ease, color .18s ease, box-shadow .18s ease}.finish:hover{transform:translateY(-1px);box-shadow:0 12px 24px rgba(0,0,0,.06)}.finish.active{background:#12110f;color:white;border-color:#12110f}.swatch{width:18px;height:18px;border-radius:50%;border:1px solid rgba(0,0,0,.18);flex:0 0 auto}.selectorNote{font-size:13px;color:var(--muted);line-height:1.55;margin-top:20px;padding-top:22px;border-top:1px solid var(--line)}
+    .section{padding:clamp(70px,9vw,150px) clamp(22px,6vw,118px);max-width:1720px;margin:0 auto}.sectionHeader{display:flex;justify-content:space-between;align-items:flex-end;gap:46px;margin-bottom:36px}.kicker{font-size:12px;font-weight:900;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin-bottom:12px}.section h2{font-size:clamp(40px,5vw,78px);letter-spacing:-.075em;line-height:.94;margin:0;max-width:880px}.section p{font-size:18px;line-height:1.6;color:var(--muted);max-width:610px;margin:0}.bleed{width:100%;overflow:hidden;box-shadow:var(--shadow);background:#ddd}.bleed img{width:100%;height:auto}.detailGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.detailCard{background:rgba(255,255,255,.28);border:1px solid var(--line);padding:14px}.detailCard img{aspect-ratio:1/1;object-fit:cover;width:100%;margin-bottom:18px}.detailCard h3{font-size:19px;letter-spacing:-.04em;margin:0 0 8px}.detailCard p{font-size:14px;line-height:1.5}.engineering{display:grid;grid-template-columns:minmax(360px,620px) 1fr;gap:clamp(34px,6vw,94px);align-items:center}.engineering img{filter:drop-shadow(0 30px 45px rgba(45,38,28,.12))}.engSpecs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.engSpecs div{border-top:1px solid var(--line);padding:22px 0}.engSpecs strong{font-size:22px;letter-spacing:-.045em}.engSpecs span{display:block;margin-top:8px;color:var(--muted);line-height:1.45}.sketch img{box-shadow:var(--shadow);width:100%}.footer{padding:70px 24px 100px;text-align:center;color:var(--muted);font-size:13px}
+    @media(max-width:1320px){.hero{grid-template-columns:1fr;gap:30px;text-align:center;min-height:auto}.titleBlock h1,.titleBlock .sub,.titleBlock .body{margin-left:auto;margin-right:auto}.controls{max-width:680px;width:100%;margin:0 auto;text-align:left}.viewer{width:min(74vw,630px)}.nav{display:none}.topbar{justify-content:center}.sectionHeader{display:block}.sectionHeader p{margin-top:20px}.engineering{grid-template-columns:1fr}.engineering>img{max-width:620px;margin:0 auto}.detailGrid{grid-template-columns:1fr}}
+    @media(max-width:700px){.topbar{height:60px}.brand{font-size:11px}.hero{padding:38px 18px 60px}.eyebrow{font-size:10px;margin-bottom:18px}.titleBlock h1{font-size:52px}.titleBlock .sub{font-size:23px}.viewer{width:min(94vw,500px)}.finish{height:44px}.section{padding:70px 18px}.section h2{font-size:42px}.engSpecs{grid-template-columns:1fr}}
+  </style>
 </head>
 <body>
-<main>
+  <header class="topbar">
+    <div class="brand">Premium Home Networking</div>
+    <nav class="nav"><a href="#overview">Overview</a><a href="#details">Details</a><a href="#context">Lifestyle</a><a href="#engineering">Engineering</a><a href="#process">Process</a></nav>
+  </header>
 
-<!-- NAV -->
-<nav>
-  <div class="nav-brand">
-    <div class="nav-diamond"></div>
-    <span class="nav-title">ROOK<span>_</span></span>
-  </div>
-  <div class="nav-links">
-    <a href="#motion">MOTION</a>
-    <a href="#origin">MISSION</a>
-    <a href="#gallery">VISUAL</a>
-    <a href="#bay">SYSTEMS</a>
-    <a href="#contact">CONTACT</a>
-  </div>
-  <span class="nav-doc">DOC <b>ROOK-A03-CS-001</b> REV D</span>
-</nav>
-
-<!-- HERO — cinematic scrub walkaround -->
-<header class="scrub-wrap" id="scrubWrap">
-  <div class="scrub-sticky">
-    <canvas id="scrubCanvas"></canvas>
-
-    <!-- title overlay (fades out as orbit begins) -->
-    <div class="scrub-title" id="scrubTitle">
-      <div class="eyebrow">AUTONOMOUS SYSTEMS // CONCEPT STUDY</div>
-      <h1>ROOK <b>A03</b></h1>
-      <div class="sub">AUTONOMOUS DRONE SUPPORT PLATFORM</div>
-      <div class="hero-quick">
-        <div class="hq"><div><span class="hq-n" data-count="2" data-suffix="×">0</span><span class="hq-u">GHOST</span></div><div class="hq-l">MISSION-READY</div></div>
-        <div class="hq"><div><span class="hq-n">4×4</span></div><div class="hq-l">ALL-TERRAIN EV</div></div>
-        <div class="hq"><div><span class="hq-n" data-count="272">0</span><span class="hq-u">KG</span></div><div class="hq-l">PAYLOAD</div></div>
-        <div class="hq"><div><span class="hq-n" data-count="58">0</span><span class="hq-u">KM</span></div><div class="hq-l">RANGE</div></div>
+  <main>
+    <section class="hero" id="overview">
+      <div class="titleBlock">
+        <div class="eyebrow">Industrial Design Exploration</div>
+        <h1>Premium Home<br>Networking</h1>
+        <p class="sub">Designed to be displayed. Not hidden.</p>
+        <p class="body">An industrial design study exploring how premium networking hardware can become part of the home—not something hidden behind it.</p>
       </div>
-    </div>
 
-    <!-- scroll-timed callouts -->
-    <svg class="co-svg" id="coSvg"></svg>
-
-    <div class="scrub-hud">A03 // WALKAROUND — SCROLL TO ORBIT</div>
-    <div class="scrub-cue">SCROLL</div>
-    <div class="scrub-track"><div class="scrub-fill" id="scrubFill"></div></div>
-  </div>
-</header>
-
-<!-- TICKER -->
-<div class="ticker">
-  <div class="ticker-track">
-    <span>DEPLOY · RECOVER · SUSTAIN</span><span>◆</span><span>MUTT 4×4 CHASSIS</span><span>◆</span><span>LATTICE OS NATIVE</span><span>◆</span><span>V-22 AIR TRANSPORTABLE</span><span>◆</span><span>BUILT FOR THE MISSION</span>
-  </div>
-</div>
-
-<!-- MOTION -->
-<section id="motion" class="motion-section">
-  <div class="sec-head reveal">
-    <div class="sec-num">01</div>
-    <div>
-      <div class="sec-eyebrow">MOTION STUDY</div>
-      <div class="sec-title">ROOK in the field.</div>
-    </div>
-  </div>
-  <div class="vid-grid reveal">
-    <div class="vid-cell">
-      <video muted loop playsinline preload="metadata" src="assets/vid/open.mp4"></video>
-      <span class="vid-tag"><b>M-01</b> // BAY OPEN SEQUENCE</span>
-      <span class="vid-rec"></span>
-    </div>
-    <div class="vid-cell">
-      <video muted loop playsinline preload="metadata" src="assets/vid/terrain.mp4"></video>
-      <span class="vid-tag"><b>M-02</b> // TERRAIN TRAVERSE</span>
-      <span class="vid-rec"></span>
-    </div>
-    <div class="vid-cell">
-      <video muted loop playsinline preload="metadata" src="assets/vid/soldier.mp4"></video>
-      <span class="vid-tag"><b>M-03</b> // DISMOUNT ESCORT</span>
-      <span class="vid-rec"></span>
-    </div>
-    <div class="vid-cell">
-      <video muted loop playsinline preload="metadata" src="assets/vid/stop.mp4"></video>
-      <span class="vid-tag"><b>M-04</b> // HALT &amp; DEPLOY</span>
-      <span class="vid-rec"></span>
-    </div>
-  </div>
-</section>
-
-<!-- ORIGIN / MISSION -->
-<section id="origin">
-  <div class="sec-head reveal">
-    <div class="sec-num">02</div>
-    <div>
-      <div class="sec-eyebrow">NAME ORIGIN · ROLE IN THE MISSION</div>
-      <div class="sec-title">Strength. Protection.<br><em>Mobility.</em></div>
-    </div>
-  </div>
-
-  <div class="origin-grid reveal">
-    <div class="origin-chess">
-      <div class="chess-frame">
-        <svg width="120" height="150" viewBox="0 0 120 150" fill="none" stroke="#EDEFF4" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round">
-          <!-- battlements -->
-          <path d="M34 14 L34 34 L46 34 L46 24 L54 24 L54 34 L66 34 L66 24 L74 24 L74 34 L86 34 L86 14 L74 14 L74 20 L66 20 L66 14 L54 14 L54 20 L46 20 L46 14 Z"/>
-          <!-- collar -->
-          <path d="M38 34 L82 34 L78 44 L42 44 Z"/>
-          <!-- body taper -->
-          <path d="M44 44 L46 66 L44 100 L76 100 L74 66 L76 44"/>
-          <!-- body detail lines -->
-          <line x1="47" y1="58" x2="73" y2="58" opacity="0.45"/>
-          <line x1="46" y1="84" x2="74" y2="84" opacity="0.45"/>
-          <!-- base tiers -->
-          <path d="M38 100 L82 100 L86 112 L34 112 Z"/>
-          <path d="M28 112 L92 112 L96 126 L24 126 Z"/>
-          <!-- gold ground line -->
-          <line x1="14" y1="136" x2="106" y2="136" stroke="#D3A017" stroke-width="2"/>
-          <line x1="26" y1="142" x2="94" y2="142" stroke="#D3A017" stroke-width="1" opacity="0.4"/>
-        </svg>
+      <div class="productStage">
+        <div class="viewer" id="viewer" aria-live="polite">
+          <img class="baseFront" src="assets/Prod_Base_Front.png" alt="Premium home networking router front view base">
+          <img class="overlay" id="finishOverlay" src="assets/Prod_Base_Front_wood.png" alt="Selected material finish overlay">
+        </div>
       </div>
-      <div class="origin-word">ROOK</div>
-    </div>
-    <div class="origin-body">
-      <p>The name <strong>ROOK</strong> is derived from the chess piece. On the board, the rook is a symbol of:</p>
-      <div class="chess-traits" style="grid-template-columns: repeat(3, auto); justify-content: start; gap: 8px 36px;">
-        <span class="trait">STRENGTH</span>
-        <span class="trait">PROTECTION</span>
-        <span class="trait">MOBILITY</span>
+
+      <aside class="controls">
+        <div class="label">Color · Material · Finish</div>
+        <div class="current" id="currentFinish">Bamboo</div>
+        <div class="finishList" id="finishList"></div>
+        <p class="selectorNote">Restrained materials, passive ventilation, and a single ambient status light create a router intended to live comfortably beside books, ceramics, and everyday objects.</p>
+      </aside>
+    </section>
+
+    <section class="section" id="context">
+      <div class="sectionHeader"><div><div class="kicker">Context</div><h2>Designed to Belong.</h2></div><p>Premium networking hardware is often hidden from view. This exploration reimagines the router as a refined object designed to complement modern interiors.</p></div>
+      <div class="bleed"><img src="assets/productshot1.png" alt="Router displayed on a bookshelf in a home interior"></div>
+    </section>
+
+    <section class="section" id="details">
+      <div class="sectionHeader"><div><div class="kicker">Details</div><h2>Crafted in Detail.</h2></div><p>Material transitions, integrated ventilation, and tactile controls were refined to create a product that feels intentional from every angle.</p></div>
+      <div class="detailGrid">
+        <article class="detailCard"><img src="assets/detail_knob.png" alt="Close-up of knurled control dial"><h3>Diamond‑Knurled Control Dial</h3><p>A single tactile control creates a quiet, intentional interaction point.</p></article>
+        <article class="detailCard"><img src="assets/detail_corner.png" alt="Close-up of machined aluminum corner"><h3>Precision‑Machined Chassis</h3><p>Soft radiused corners and subtle chamfers give the object a furniture‑grade presence.</p></article>
+        <article class="detailCard"><img src="assets/detail_top.png" alt="Close-up of top ventilation detail"><h3>Integrated Thermal Venting</h3><p>Passive airflow is treated as part of the design language rather than a hidden compromise.</p></article>
       </div>
-      <p>Like the rook on the board, this platform provides <strong>a strong, mobile foundation that enables mission success</strong> — an autonomous ground vehicle designed to deploy, recover, and sustain unmanned systems in contested environments.</p>
-    </div>
-  </div>
+    </section>
 
-  <div class="roles reveal">
-    <div class="role">
-      <div class="role-icon">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#D3A017" stroke-width="1.5">
-          <rect x="9" y="9" width="6" height="5"/><path d="M9 11 L3 7 M15 11 L21 7 M3 7 a2 2 0 1 1 0.1 0 M21 7 a2 2 0 1 1 0.1 0 M12 14 l0 4 M8 20 l8 0"/>
-        </svg>
+    <section class="section">
+      <div class="sectionHeader"><div><div class="kicker">Workspace</div><h2>At Home in the Workspace.</h2></div><p>A restrained form language allows the product to complement modern work environments without becoming a visual distraction.</p></div>
+      <div class="bleed"><img src="assets/productshot2.png" alt="Router in a clean office workspace"></div>
+    </section>
+
+    <section class="section" id="engineering">
+      <div class="sectionHeader"><div><div class="kicker">Engineering</div><h2>Performance With Restraint.</h2></div><p>Performance and restraint can coexist. Passive cooling, concealed antennas, and multi‑gig connectivity are integrated within a calm architectural form.</p></div>
+      <div class="engineering">
+        <img src="assets/Prod_Base_Back.png" alt="Rear view showing multi-gig ports and ventilation">
+        <div class="engSpecs">
+          <div><strong>Wi‑Fi 7</strong><span>Tri‑band performance for dense modern homes.</span></div>
+          <div><strong>10 Gb WAN/LAN</strong><span>Flagship connectivity for multi‑gig networks.</span></div>
+          <div><strong>4×2.5 Gb LAN</strong><span>High-speed wired ports for workstations and media.</span></div>
+          <div><strong>Mesh Ready</strong><span>Designed for whole‑home coverage and expansion.</span></div>
+          <div><strong>USB‑C</strong><span>Modern service and accessory support.</span></div>
+          <div><strong>Passive Cooling</strong><span>Integrated airflow without visual noise.</span></div>
+        </div>
       </div>
-      <div class="role-title">ENABLES DRONES</div>
-      <div class="role-body">Carries, charges, and maintains unmanned systems ready for rapid deployment.</div>
-    </div>
-    <div class="role">
-      <div class="role-icon">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#D3A017" stroke-width="1.5">
-          <rect x="6" y="4" width="12" height="17" rx="1.5"/><path d="M10 4 l0 -2 4 0 0 2 M12 9 l0 6 M9 12 l6 0"/>
-        </svg>
-      </div>
-      <div class="role-title">EXTENDS RANGE</div>
-      <div class="role-body">Brings power, payloads, and logistics deep into the operational area.</div>
-    </div>
-    <div class="role">
-      <div class="role-icon">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#D3A017" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
-        </svg>
-      </div>
-      <div class="role-title">SUSTAINS OPS</div>
-      <div class="role-body">Provides the tools, parts, and support needed to keep missions moving.</div>
-    </div>
-    <div class="role">
-      <div class="role-icon">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#D3A017" stroke-width="1.5">
-          <path d="M12 2 L20 6 L20 12 C20 17 16.5 20.5 12 22 C7.5 20.5 4 17 4 12 L4 6 Z"/>
-          <path d="M12 8 l1.2 2.6 2.8 0.3 -2.1 1.9 0.6 2.8 -2.5 -1.5 -2.5 1.5 0.6 -2.8 -2.1 -1.9 2.8 -0.3 Z" fill="#D3A017" stroke="none"/>
-        </svg>
-      </div>
-      <div class="role-title">SURVIVABILITY</div>
-      <div class="role-body">Autonomous and expendable when needed — reducing risk to personnel.</div>
-    </div>
-  </div>
+    </section>
 
-  <div class="why reveal">
-    <div class="why-text">ROOK is more than a vehicle — it's a <em>force multiplier</em>. It empowers operators to project autonomous capability farther, operate longer, and adapt faster.</div>
-    <div class="why-tag">SILENT. RELENTLESS. MISSION-READY.</div>
-  </div>
-</section>
+    <section class="section sketch" id="process">
+      <div class="sectionHeader"><div><div class="kicker">Process</div><h2>From Exploration to Form.</h2></div><p>Early explorations investigated proportion, material, airflow, and interaction before converging on the final design direction.</p></div>
+      <img src="assets/Prod_Base_sketches.png" alt="Industrial design sketch sheet showing router form exploration">
+    </section>
+  </main>
 
-<!-- GALLERY -->
-<div id="gallery" class="gallery reveal">
-  <div class="gallery-slideshow">
-    <div class="gallery-slide active"><img src="assets/img/studio_close.jpg" alt="ROOK studio front"><div class="gallery-label"><i>STUDIO</i> // FRONT DETAIL · LIVERY APPLIED</div></div>
-    <div class="gallery-slide"><img src="assets/img/studio_open.jpg" alt="ROOK studio bay open"><div class="gallery-label"><i>STUDIO</i> // BAY OPEN · MISSION CONFIGURATION</div></div>
-    <div class="gallery-slide"><img src="assets/img/studio_rear.jpg" alt="ROOK studio rear"><div class="gallery-label"><i>STUDIO</i> // REAR QUARTER</div></div>
-    <div class="gallery-slide"><img src="assets/img/cargo_01.jpg" alt="ROOK C-17 airlift"><div class="gallery-label"><i>TRANSPORT</i> // C-17 STRATEGIC AIRLIFT · 2× ROOK</div></div>
-    <div class="gallery-slide"><img src="assets/img/dirt_drive.jpg" alt="ROOK field transit"><div class="gallery-label"><i>FIELD</i> // AUTONOMOUS TRANSIT</div></div>
-    <div class="gallery-slide"><img src="assets/img/dirt_soldier.jpg" alt="ROOK dismount escort"><div class="gallery-label"><i>FIELD</i> // DISMOUNT ESCORT · FOLLOW MODE</div></div>
-    <div class="gallery-slide"><img src="assets/img/dirt_cargo.jpg" alt="ROOK field resupply"><div class="gallery-label"><i>FIELD</i> // FORWARD RESUPPLY</div></div>
-    <div class="gallery-slide"><img src="assets/img/grass_rear.jpg" alt="ROOK overwatch"><div class="gallery-label"><i>FIELD</i> // OVERWATCH POSITION</div></div>
+  <script>
+    const finishes = [
+      {id:'natural', name:'Natural', label:'Natural Aluminum', color:'#d8d2c8', src:'assets/Prod_Base_Front.png'},
+      {id:'black', name:'Obsidian', label:'Obsidian', color:'#11110f', src:'assets/Prod_Base_Front_black.png'},
+      {id:'white', name:'White', label:'White', color:'#f5f2ea', src:'assets/Prod_Base_Front_white.png'},
+      {id:'rose', name:'Rose', label:'Rose', color:'#c79a90', src:'assets/Prod_Base_Front_rose.png'},
+      {id:'glass', name:'Glass', label:'Glass', color:'#eef7fb', src:'assets/Prod_Base_Front_glass.png'},
+      {id:'teal', name:'Teal', label:'Teal', color:'#27978f', src:'assets/Prod_Base_Front_teal.png'},
+      {id:'bamboo', name:'Bamboo', label:'Bamboo', color:'#d5aa5e', src:'assets/Prod_Base_Front_wood.png'}
+    ];
+    const list = document.getElementById('finishList');
+    const overlay = document.getElementById('finishOverlay');
+    const current = document.getElementById('currentFinish');
+    let active = 'bamboo';
 
-    <div class="gallery-hud-tl">VISUAL RECORD // A03 SERIES</div>
-    <div class="gallery-hud-tr"><b id="gallery-current">01</b> / 08</div>
-    <div class="gallery-dots" id="gallery-dots"></div>
-    <div class="gallery-progress" id="gallery-progress"></div>
-  </div>
-</div>
+    finishes.forEach(f => {
+      const btn = document.createElement('button');
+      btn.className = 'finish';
+      btn.type = 'button';
+      btn.dataset.id = f.id;
+      btn.innerHTML = `<span class="swatch" style="background:${f.color}"></span><span>${f.name}</span>`;
+      btn.addEventListener('click', () => setFinish(f.id));
+      list.appendChild(btn);
+      const preload = new Image(); preload.src = f.src;
+    });
 
-<!-- BAY / SYSTEMS -->
-<section id="bay" class="bay-section">
-  <div class="sec-head reveal">
-    <div class="sec-num">03</div>
-    <div>
-      <div class="sec-eyebrow">ONBOARD SYSTEMS</div>
-      <div class="sec-title">Every millimeter <em>accounted for.</em></div>
-    </div>
-  </div>
-  <div class="xray reveal" id="xray">
-    <img class="xray-base" src="assets/img/inter_beauty.jpg" alt="ROOK payload bay — physical">
-    <div class="xray-top"><img src="assets/img/inter_wire.jpg" alt="ROOK payload bay — schematic wireframe"></div>
-    <div class="xray-handle"><div class="xray-grip">&#x2194;</div></div>
-    <div class="img-tag">FIG 01 // PAYLOAD BAY — DRAG TO INSPECT</div>
-    <div class="xray-lab xray-lab-l">PHYSICAL</div>
-    <div class="xray-lab xray-lab-r">SCHEMATIC</div>
-  </div>
+    function setFinish(id){
+      active = id;
+      const f = finishes.find(x=>x.id===id);
+      current.textContent = f.label;
+      overlay.style.opacity = 0;
+      setTimeout(()=>{ overlay.src = f.src; overlay.style.opacity = id === 'natural' ? 0 : 1; }, 120);
+      document.querySelectorAll('.finish').forEach(b=>b.classList.toggle('active', b.dataset.id===id));
+    }
+    setFinish(active);
+  </script>
 
-  <div class="bay-grid reveal">
-    <div class="bay-card">
-      <span class="bay-card-num">01–02</span>
-      <div class="bay-card-title">GHOST BAY</div>
-      <div class="bay-card-body">Two Ghost drones in folded transport config. Foam-lined quick-release drawers, deploy-ready in under 60 seconds per unit. 60 mm clearance reserved for connectors and vibration isolation.</div>
-    </div>
-    <div class="bay-card">
-      <span class="bay-card-num">03–10</span>
-      <div class="bay-card-title">CHARGE RACK</div>
-      <div class="bay-card-body">Eight-pack battery magazine charging in sequence off the 1.5 kW export bus — each pack fast-charges in ~35 minutes. Per-cell temperature monitoring, status LEDs visible without opening the bay.</div>
-    </div>
-    <div class="bay-card">
-      <span class="bay-card-num">11</span>
-      <div class="bay-card-title">MAINTENANCE</div>
-      <div class="bay-card-body">Rotor installation tool, spare propellers, torque kit, airframe locking pins, diagnostic cable, MIL-spec field repair pouch — all accessible without removing drones.</div>
-    </div>
-    <div class="bay-card">
-      <span class="bay-card-num">12</span>
-      <div class="bay-card-title">EDGE COMPUTE</div>
-      <div class="bay-card-body">Integrated Lattice OS node. Lattice Mesh networking, 900 MHz MANET radio, GPS/INS. ROOK acts as a mobile ground control station — Ghosts hand off telemetry, rearm, and relaunch through Lattice.</div>
-    </div>
-  </div>
-</section>
+<footer style="padding:140px 20px 90px;text-align:center;font-family:Inter,Arial,sans-serif;">
 
-<!-- DEPLOYMENT -->
-<section>
-  <div class="sec-head reveal">
-    <div class="sec-num">04</div>
-    <div>
-      <div class="sec-eyebrow">DEPLOYMENT SEQUENCE</div>
-      <div class="sec-title">Ghost to airborne in <em>90 seconds.</em></div>
-    </div>
-  </div>
-  <div class="deploy-track reveal" id="deployTrack">
-    <div class="deploy-step"><div class="deploy-step-num">01</div><div class="deploy-step-title">LID OPENS</div><div class="deploy-step-sub">Hydraulic actuators split canopy in under 4 seconds</div></div>
-    <div class="deploy-step"><div class="deploy-step-num">02</div><div class="deploy-step-title">DRAWER OUT</div><div class="deploy-step-sub">Ghost 01 slides to deploy position on rails</div></div>
-    <div class="deploy-step"><div class="deploy-step-num">03</div><div class="deploy-step-title">MAIN ROTOR</div><div class="deploy-step-sub">Swing and lock — audible click confirms engagement</div></div>
-    <div class="deploy-step"><div class="deploy-step-num">04</div><div class="deploy-step-title">TAIL SET</div><div class="deploy-step-sub">Extend tail boom, swing tail rotor into position</div></div>
-    <div class="deploy-step"><div class="deploy-step-num">05</div><div class="deploy-step-title">SYS CHECK</div><div class="deploy-step-sub">Lattice pre-flight — battery, comms, nav confirmed</div></div>
-    <div class="deploy-step"><div class="deploy-step-num">06</div><div class="deploy-step-title">LAUNCH</div><div class="deploy-step-sub">Liftoff. ROOK closes bay, resumes mission</div></div>
-  </div>
-  <div class="deploy-readout reveal">
-    <span>ELAPSED</span><b id="deployClock">T+00:00</b>
-    <div class="deploy-bar"><div class="deploy-bar-fill" id="deployBar"></div></div>
-    <span>GHOST 01 // <b style="font-size:12px">AIRBORNE</b></span>
-  </div>
-</section>
-
-<!-- GRAPHIC SYSTEM -->
-<section id="decals" class="decal-section">
-  <div class="sec-head reveal">
-    <div class="sec-num">05</div>
-    <div>
-      <div class="sec-eyebrow">GRAPHIC SYSTEM · REV 02</div>
-      <div class="sec-title">Functional. Minimal.<br><em>Purposeful.</em></div>
-    </div>
-  </div>
-  <div class="decal-grid reveal">
-    <div class="decal-cell"><img src="assets/decals/identity_rook_wordmark_white.svg" alt="ROOK wordmark"><span class="decal-name">ROOK IDENTITY</span></div>
-    <div class="decal-cell"><img src="assets/decals/identity_a03_unit.svg" alt="A03 unit"><span class="decal-name">A03 UNIT MARK</span></div>
-    <div class="decal-cell"><img src="assets/decals/plate_a03_rev.svg" alt="A03 rev plate"><span class="decal-name">REVISION PLATE</span></div>
-    <div class="decal-cell"><img src="assets/decals/sideband_rook_a03.svg" alt="ROOK sideband"><span class="decal-name">ROOK SIDEBAND</span></div>
-    <div class="decal-cell"><img src="assets/decals/sideband_hazard_a03.svg" alt="hazard sideband"><span class="decal-name">HAZARD SIDEBAND</span></div>
-    <div class="decal-cell"><img src="assets/decals/func_lift_point.svg" alt="lift point"><span class="decal-name">LIFT POINT</span></div>
-
-    <div class="decal-cell"><img src="assets/decals/bay_marker_01.svg" alt="ghost dock 01"><span class="decal-name">GHOST DOCK 01</span></div>
-    <div class="decal-cell"><img src="assets/decals/bay_marker_02.svg" alt="ghost dock 02"><span class="decal-name">GHOST DOCK 02</span></div>
-    <div class="decal-cell"><img src="assets/decals/bay_marker_03.svg" alt="ghost dock 03"><span class="decal-name">GHOST DOCK 03</span></div>
-    <div class="decal-cell"><img src="assets/decals/bay_marker_04.svg" alt="ghost dock 04"><span class="decal-name">GHOST DOCK 04</span></div>
-    <div class="decal-cell"><img src="assets/decals/dock_align_front.svg" alt="align front"><span class="decal-name">ALIGN FRONT</span></div>
-    <div class="decal-cell"><img src="assets/decals/dock_locked.svg" alt="locked"><span class="decal-name">LOCKED</span></div>
-
-    <div class="decal-cell"><img src="assets/decals/warn_hot_surface.svg" alt="hot surface"><span class="decal-name">HOT SURFACE</span></div>
-    <div class="decal-cell"><img src="assets/decals/warn_pinch_point.svg" alt="pinch point"><span class="decal-name">PINCH POINT</span></div>
-    <div class="decal-cell"><img src="assets/decals/warn_high_voltage.svg" alt="high voltage"><span class="decal-name">HIGH VOLTAGE</span></div>
-    <div class="decal-cell"><img src="assets/decals/warn_moving_parts.svg" alt="moving parts"><span class="decal-name">MOVING PARTS</span></div>
-    <div class="decal-cell"><img src="assets/decals/hazard_danger_red.svg" alt="danger critical"><span class="decal-name">DANGER / CRITICAL</span></div>
-    <div class="decal-cell"><img src="assets/decals/hazard_nostep_white.svg" alt="no step"><span class="decal-name">NO STEP / HAZARD</span></div>
-
-    <div class="decal-cell"><img src="assets/decals/syslabel_mtr_04.svg" alt="drive label"><span class="decal-name">SYS · DRIVE</span></div>
-    <div class="decal-cell"><img src="assets/decals/syslabel_sys_04.svg" alt="suspension label"><span class="decal-name">SYS · SUSPENSION</span></div>
-    <div class="decal-cell"><img src="assets/decals/syslabel_com_01.svg" alt="comms label"><span class="decal-name">SYS · COMMS</span></div>
-    <div class="decal-cell"><img src="assets/decals/syslabel_core.svg" alt="mission core label"><span class="decal-name">SYS · MISSION</span></div>
-    <div class="decal-cell"><img src="assets/decals/sideband_lfp_01.svg" alt="LFP-01 band"><span class="decal-name">LFP-01 BAND</span></div>
-    <div class="decal-cell"><img src="assets/decals/sideband_pwr_02.svg" alt="PWR-02 band"><span class="decal-name">PWR-02 BAND</span></div>
-  </div>
-  <div class="decal-foot reveal">
-    <span>FULL SYSTEM // <b>IDENTITY · SYSTEM LABELS · DOCKING · WARNINGS · STATUS</b></span>
-    <span>APPLIED ACROSS HULL, BAY &amp; PAYLOAD MODULES</span>
-  </div>
-</section>
-
-<!-- PROJECT SCOPE -->
-<section id="about" class="about-section">
-  <div class="sec-head reveal">
-    <div class="sec-num">06</div>
-    <div>
-      <div class="sec-eyebrow">PROJECT SCOPE</div>
-      <div class="sec-title">Concept to communication.<br><em>End to end.</em></div>
-    </div>
-  </div>
-  <div class="reveal" style="max-width:860px">
-    <p style="color:var(--grey); font-size:16px; line-height:1.9; margin-bottom:32px">
-      ROOK is a self-directed concept study exploring how a small autonomous ground vehicle could deploy, recover, and sustain Ghost-class drones at the squad level. The concept draws on <strong style="color:var(--white)">real-world platforms and published specifications</strong> — from the GDLS MUTT family to Ghost-class drone systems — then carries the idea through a full design communication pipeline.
+    <p style="
+        color:#8a8a8a;
+        font-size:15px;
+        letter-spacing:.04em;
+        margin:0 0 24px;">
+        Concept • Design • Visualization
     </p>
-  </div>
-  <div class="roles reveal">
-    <div class="role">
-      <div class="role-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#D3A017" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M12 2 l0 4 M12 18 l0 4 M2 12 l4 0 M18 12 l4 0"/></svg></div>
-      <div class="role-title">CONCEPT &amp; RESEARCH</div>
-      <div class="role-body">Platform selection, real-world spec grounding, mission definition, payload budgeting.</div>
-    </div>
-    <div class="role">
-      <div class="role-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#D3A017" stroke-width="1.5"><rect x="3" y="3" width="8" height="8"/><rect x="13" y="13" width="8" height="8"/><path d="M13 8 l8 0 M8 13 l0 8"/></svg></div>
-      <div class="role-title">GRAPHIC SYSTEM</div>
-      <div class="role-body">Complete decal &amp; livery system — identity marks, system labels, warnings, docking guides.</div>
-    </div>
-    <div class="role">
-      <div class="role-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#D3A017" stroke-width="1.5"><path d="M3 17 L9 11 L13 15 L21 7 M21 7 l0 5 M21 7 l-5 0"/></svg></div>
-      <div class="role-title">VISUALIZATION</div>
-      <div class="role-body">Studio and field renders, payload configuration studies, livery application.</div>
-    </div>
-    <div class="role">
-      <div class="role-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#D3A017" stroke-width="1.5"><rect x="3" y="5" width="18" height="14" rx="1.5"/><path d="M10 9 l5 3 -5 3 Z" fill="#D3A017" stroke="none"/></svg></div>
-      <div class="role-title">MOTION &amp; WEB</div>
-      <div class="role-body">Field motion studies, HUD-style interface animation, and this presentation.</div>
-    </div>
-  </div>
-</section>
 
-<!-- CONTACT -->
-<section id="contact" class="contact-section">
-  <div class="reveal">
-    <div class="contact-eyebrow">// GET IN TOUCH</div>
-    <div class="contact-name">MICHAEL ALTUNA</div>
-    <div class="contact-role">SENIOR 3D ARTIST · ENVIRONMENT &amp; HARD SURFACE</div>
-    <div class="contact-links">
-      <a class="contact-link" href="mailto:michaelaltuna@gmail.com">MICHAELALTUNA@GMAIL.COM</a>
-      <a class="contact-link" href="https://www.linkedin.com/in/michaelaltuna/" target="_blank" rel="noopener">LINKEDIN</a>
-      <a class="contact-link" href="https://michaelaltuna.com/" target="_blank" rel="noopener">PORTFOLIO</a>
-    </div>
-  </div>
-</section>
+    <h3 style="
+        margin:0 0 28px;
+        font-size:22px;
+        font-weight:500;
+        color:#111;">
+        Michael Altuna
+    </h3>
 
-<!-- FOOTER -->
-<footer>
-  <div class="footer-badges">
-    <span class="footer-badge">DESIGNED IN THE USA</span>
-    <span class="footer-badge">LATTICE OS COMPATIBLE</span>
-    <span class="footer-badge">EDGE AI READY</span>
-    <span class="footer-badge">V-22 TRANSPORTABLE</span>
-  </div>
-  <div class="footer-right">
-    <div class="barcode" id="barcode"></div>
-    <span class="footer-concept">PERSONAL CONCEPT STUDY · SPECULATIVE DESIGN · NOT AN OFFICIAL PRODUCT</span>
-  </div>
+    <div style="
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        gap:14px;
+        flex-wrap:wrap;
+        font-size:16px;">
+
+        <a href="mailto:michaelaltuna@gmail.com"
+           style="color:#111;text-decoration:none;">
+            Contact
+        </a>
+
+        <span style="color:#bdbdbd;">•</span>
+
+        <a href="https://www.linkedin.com/in/michaelaltuna/"
+           target="_blank"
+           style="color:#111;text-decoration:none;">
+            LinkedIn
+        </a>
+
+        <span style="color:#bdbdbd;">•</span>
+
+        <a href="https://www.michaelaltuna.com"
+           target="_blank"
+           style="color:#111;text-decoration:none;">
+            Portfolio
+        </a>
+
+    </div>
+
 </footer>
 
-</main>
-<script>
-  /* ── Reveal on scroll + skill bars ── */
-  const reveals = document.querySelectorAll('.reveal');
-  const io = new IntersectionObserver((entries) => {
-    entries.forEach(e => {
-      if (e.isIntersecting) {
-        e.target.classList.add('visible');
-        e.target.querySelectorAll('.skill-bar-fill').forEach(f => { f.style.width = f.dataset.w; });
-      }
-    });
-  }, { threshold: 0.08, rootMargin: '0px 0px -30px 0px' });
-  reveals.forEach(r => io.observe(r));
-
-  /* ── Count-up numbers ── */
-  const counters = document.querySelectorAll('[data-count]');
-  const cio = new IntersectionObserver((entries) => {
-    entries.forEach(e => {
-      if (!e.isIntersecting || e.target.dataset.done) return;
-      e.target.dataset.done = '1';
-      const end = parseInt(e.target.dataset.count, 10);
-      const comma = e.target.dataset.comma === '1';
-      const suffix = e.target.dataset.suffix || '';
-      const dur = 1400; const t0 = performance.now();
-      function tick(t) {
-        const p = Math.min((t - t0) / dur, 1);
-        const eased = 1 - Math.pow(1 - p, 3);
-        let v = Math.round(end * eased);
-        e.target.textContent = (comma ? v.toLocaleString('en-US') : v) + suffix;
-        if (p < 1) requestAnimationFrame(tick);
-      }
-      requestAnimationFrame(tick);
-    });
-  }, { threshold: 0.5 });
-  counters.forEach(c => cio.observe(c));
-
-  /* ── GALLERY SLIDESHOW ── */
-  const slides = document.querySelectorAll('.gallery-slide');
-  const dotsContainer = document.getElementById('gallery-dots');
-  const currentLabel = document.getElementById('gallery-current');
-  const progressBar = document.getElementById('gallery-progress');
-  const INTERVAL = 4000;
-  let current = 0; let timer;
-  slides.forEach((_, i) => {
-    const dot = document.createElement('div');
-    dot.className = 'gallery-dot' + (i === 0 ? ' active' : '');
-    dot.addEventListener('click', () => { goTo(i); startTimer(); });
-    dotsContainer.appendChild(dot);
-  });
-  function goTo(i) {
-    slides[current].classList.remove('active');
-    dotsContainer.children[current].classList.remove('active');
-    current = i;
-    slides[current].classList.add('active');
-    dotsContainer.children[current].classList.add('active');
-    currentLabel.textContent = String(current + 1).padStart(2, '0');
-    resetProgress();
-  }
-  function nextSlide() { goTo((current + 1) % slides.length); }
-  function resetProgress() {
-    progressBar.style.transition = 'none';
-    progressBar.style.width = '0%';
-    requestAnimationFrame(() => requestAnimationFrame(() => {
-      progressBar.style.transition = 'width ' + INTERVAL + 'ms linear';
-      progressBar.style.width = '100%';
-    }));
-  }
-  function startTimer() {
-    clearInterval(timer);
-    timer = setInterval(() => { hovering ? resetProgress() : nextSlide(); }, INTERVAL);
-  }
-  const show = document.querySelector('.gallery-slideshow');
-  let hovering = false;
-  show.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') hovering = true; });
-  show.addEventListener('pointerleave', () => { hovering = false; });
-  resetProgress(); startTimer();
-
-  /* ── VIDEOS: play when visible ── */
-  const vids = document.querySelectorAll('.vid-cell video');
-  const vio = new IntersectionObserver((entries) => {
-    entries.forEach(e => { e.isIntersecting ? e.target.play().catch(()=>{}) : e.target.pause(); });
-  }, { threshold: 0.35 });
-  vids.forEach(v => vio.observe(v));
-
-  /* ── DEPLOYMENT AUTO-SEQUENCER ── */
-  const steps = document.querySelectorAll('#deployTrack .deploy-step');
-  const clock = document.getElementById('deployClock');
-  const bar = document.getElementById('deployBar');
-  const STEP_MS = 1700; const TOTAL = steps.length * STEP_MS;
-  let dStart = null; let dRunning = false;
-  const dio = new IntersectionObserver((entries) => {
-    entries.forEach(e => {
-      if (e.isIntersecting && !dRunning) { dRunning = true; dStart = performance.now(); requestAnimationFrame(dTick); }
-    });
-  }, { threshold: 0.3 });
-  dio.observe(document.getElementById('deployTrack'));
-  function dTick(t) {
-    const elapsed = (t - dStart) % TOTAL;
-    const idx = Math.floor(elapsed / STEP_MS);
-    steps.forEach((s, i) => s.classList.toggle('live', i === idx));
-    const secs = Math.floor((elapsed / TOTAL) * 88);
-    clock.textContent = 'T+0' + Math.floor(secs / 60) + ':' + String(secs % 60).padStart(2, '0');
-    bar.style.width = ((elapsed / TOTAL) * 100) + '%';
-    requestAnimationFrame(dTick);
-  }
-
-  /* ── HERO SCRUB: canvas orbit + title fade + timed callouts ── */
-  (function() {
-    const COUNT = 81, PATH = 'assets/img/turntable/', PAD = 4, EXT = '.webp';
-    const wrap = document.getElementById('scrubWrap');
-    const canvas = document.getElementById('scrubCanvas');
-    const fill = document.getElementById('scrubFill');
-    const title = document.getElementById('scrubTitle');
-    const sticky = wrap.querySelector('.scrub-sticky');
-    const svg = document.getElementById('coSvg');
-    if (!wrap || !canvas) return;
-    const ctx = canvas.getContext('2d');
-    const frames = []; let curIdx = -1;
-
-    /* scroll-timed callouts: win = [start,end] progress window */
-    const CALLOUTS = [
-      { win: [0.14, 0.34], dot: [28, 57], lab: [28, 74], t: 'MTR-04 DRIVE', s: '4\u00d74 INDEPENDENT ELECTRIC' },
-      { win: [0.34, 0.52], dot: [50, 27], lab: [50, 15], m: { dot: [50, 44], lab: [50, 31] }, t: 'GHOST BAY 01\u201302', s: '2\u00d7 MISSION READY' },
-      { win: [0.50, 0.66], dot: [41, 56], lab: [41, 77], t: 'LFP-01 BATTERY', s: 'SEQUENCED 8-PACK CHARGE' },
-      { win: [0.64, 0.80], dot: [58, 63], lab: [58, 47], t: 'SYS-04 SUSPENSION', s: 'LONG-TRAVEL ALL-TERRAIN' },
-      { win: [0.80, 0.96], dot: [70, 65], lab: [70, 78], t: 'RECOVERY POINT', s: 'MIL-STD SHACKLE' }
-    ];
-    const items = [];
-    const isMobile = () => window.innerWidth < 700;
-    function applyCoords() {
-      items.forEach((it) => {
-        const src = (isMobile() && it.c.m) ? it.c.m : it.c;
-        it.dot.style.left = src.dot[0] + '%'; it.dot.style.top = src.dot[1] + '%';
-        it.lab.style.left = src.lab[0] + '%'; it.lab.style.top = src.lab[1] + '%';
-      });
-    }
-    CALLOUTS.forEach((c) => {
-      const dot = document.createElement('div');
-      dot.className = 'co-dot co-item';
-      const lab = document.createElement('div');
-      lab.className = 'co-label co-item';
-      lab.innerHTML = '<span class="co-t">' + c.t + '</span><span class="co-s">' + c.s + '</span>';
-      const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-      line.classList.add('co-item');
-      svg.appendChild(line); sticky.appendChild(dot); sticky.appendChild(lab);
-      items.push({ c, dot, lab, line });
-    });
-    applyCoords();
-
-    function layoutLines() {
-      const box = sticky.getBoundingClientRect();
-      items.forEach((it) => {
-        const d = it.dot.getBoundingClientRect();
-        const l = it.lab.getBoundingClientRect();
-        const dx = d.left - box.left + d.width / 2;
-        const dy = d.top - box.top + d.height / 2;
-        const lx = l.left - box.left + l.width / 2;
-        /* line ends at nearest label edge (top or bottom) */
-        const ly = (l.top + l.height / 2 > d.top + d.height / 2)
-          ? l.top - box.top
-          : l.top - box.top + l.height;
-        it.line.setAttribute('x1', dx);
-        it.line.setAttribute('y1', dy);
-        it.line.setAttribute('x2', lx);
-        it.line.setAttribute('y2', ly);
-      });
-    }
-
-    for (let i = 1; i <= COUNT; i++) {
-      const im = new Image();
-      im.src = PATH + 'frame_' + String(i).padStart(PAD, '0') + EXT;
-      if (i === 1) im.onload = () => draw(0, true);
-      frames.push(im);
-    }
-
-    function sizeCanvas() {
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      canvas.width = canvas.clientWidth * dpr;
-      canvas.height = canvas.clientHeight * dpr;
-      if (curIdx >= 0) draw(curIdx, true);
-      applyCoords();
-      layoutLines();
-    }
-
-    function draw(idx, force) {
-      if (idx === curIdx && !force) return;
-      const im = frames[idx];
-      if (!im || !im.complete || !im.naturalWidth) return;
-      curIdx = idx;
-      const cw = canvas.width, ch = canvas.height;
-      const s = Math.max(cw / im.naturalWidth, ch / im.naturalHeight);
-      const dw = im.naturalWidth * s, dh = im.naturalHeight * s;
-      ctx.clearRect(0, 0, cw, ch);
-      ctx.drawImage(im, (cw - dw) / 2, (ch - dh) / 2, dw, dh);
-    }
-
-    function onScroll() {
-      const r = wrap.getBoundingClientRect();
-      const total = r.height - window.innerHeight;
-      const p = Math.min(Math.max(-r.top / total, 0), 1);
-      fill.style.width = (p * 100) + '%';
-      draw(Math.min(Math.floor(p * COUNT), COUNT - 1));
-
-      /* title fade over first 14% of the orbit */
-      const tf = Math.min(p / 0.14, 1);
-      title.style.opacity = 1 - tf;
-      title.style.transform = 'translateY(' + (tf * 30) + 'px)';
-      title.style.pointerEvents = tf >= 1 ? 'none' : 'auto';
-
-      /* callout windows */
-      items.forEach((it) => {
-        const onNow = p >= it.c.win[0] && p <= it.c.win[1];
-        it.dot.classList.toggle('on', onNow);
-        it.lab.classList.toggle('on', onNow);
-        it.line.classList.toggle('on', onNow);
-      });
-    }
-
-    window.addEventListener('resize', sizeCanvas);
-    window.addEventListener('scroll', onScroll, { passive: true });
-    sizeCanvas(); onScroll();
-    setTimeout(layoutLines, 600); /* after webfonts settle */
-  })();
-
-  /* ── X-RAY SLIDER (payload bay physical/schematic) ── */
-  (function() {
-    const xr = document.getElementById('xray');
-    if (!xr) return;
-    let dragging = false;
-    function setX(clientX) {
-      const r = xr.getBoundingClientRect();
-      const pct = Math.min(Math.max((clientX - r.left) / r.width, 0.04), 0.96);
-      xr.style.setProperty('--x', (pct * 100) + '%');
-    }
-    xr.addEventListener('pointerdown', (e) => { dragging = true; xr.setPointerCapture(e.pointerId); setX(e.clientX); });
-    xr.addEventListener('pointermove', (e) => { if (dragging) setX(e.clientX); });
-    xr.addEventListener('pointerup', () => { dragging = false; });
-    xr.addEventListener('pointercancel', () => { dragging = false; });
-    /* auto-sweep once when scrolled into view */
-    let swept = false;
-    const xio = new IntersectionObserver((entries) => {
-      entries.forEach((en) => {
-        if (en.isIntersecting && !swept) {
-          swept = true;
-          const t0 = performance.now(); const DUR = 1400;
-          function sweep(t) {
-            const p = Math.min((t - t0) / DUR, 1);
-            const eased = 1 - Math.pow(1 - p, 3);
-            xr.style.setProperty('--x', (100 - eased * 42) + '%');  /* 100% -> 58% */
-            if (p < 1 && !dragging) requestAnimationFrame(sweep);
-          }
-          requestAnimationFrame(sweep);
-        }
-      });
-    }, { threshold: 0.35 });
-    xio.observe(xr);
-  })();
-
-  /* ── Barcode ── */
-  const bc = document.getElementById('barcode');
-  for (let i = 0; i < 28; i++) {
-    const b = document.createElement('i');
-    b.style.height = (6 + Math.random() * 16) + 'px';
-    if (Math.random() > 0.7) b.style.width = '3px';
-    bc.appendChild(b);
-  }
-</script>
 </body>
 </html>
